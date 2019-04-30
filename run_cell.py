@@ -1,12 +1,7 @@
 import sys
-from python_data import DataProcessor
-from analysis_pipeline import AnalysisPipeline
-import json
+import maxlikespy.analysis as analysis
 import os
-import util
-import cellplot
-import matplotlib.pyplot as plt
-import numpy as np
+import maxlikespy.util as util
 
 
 def run_script(cell_range):
@@ -234,8 +229,8 @@ def run_script(cell_range):
     # pipeline.fit_all_models(1)
     # pipeline.compare_models("Const", "Time", 0.01)
 
-    path_to_data = "/Users/stevecharczynski/workspace/data/cromer"
-    # path_to_data =  "/projectnb/ecog-eeg/stevechar/data/cromer"
+    # path_to_data = "/Users/stevecharczynski/workspace/data/cromer"
+    path_to_data =  "/projectnb/ecog-eeg/stevechar/data/cromer"
     # with open(path_to_data+'/number_of_trials.json', 'r') as f:
     #     num = json.load(f)
     # x = np.full(max(num), 400)
@@ -245,11 +240,11 @@ def run_script(cell_range):
     # with open(path_to_data+'/trial_lengths.json', 'w') as f:
     #     json.dump(trial_lengths.tolist(), f)
     
-    data_processor = DataProcessor(
+    data_processor = analysis.DataProcessor(
         path_to_data, cell_range, time_info=[400,2000])
     n_t = 2.
     solver_params = {
-        "niter": 250,
+        "niter": 110,
         "stepsize": 1000,
         "interval": 10,
         "method": "TNC",
@@ -257,12 +252,12 @@ def run_script(cell_range):
     }
     bounds = {
         "a_1": [10**-10, 1 / n_t],
-        "ut": [0., 2200.],
+        "ut": [0., 6000.],
         "st": [10., 5000.],
         "a_0": [10**-10, 1 / n_t]
     }
     bounds_c = {"a_0": [10**-10, 0.999]}
-    pipeline = AnalysisPipeline(cell_range, data_processor, [
+    pipeline = analysis.AnalysisPipeline(cell_range, data_processor, [
                                 "Time", "Const"], 0)
     # pipeline.show_rasters()
 
@@ -557,9 +552,6 @@ def run_script(cell_range):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-
-
-run_script(range(10,12))
 if __name__ == "__main__":
     cell_range = sys.argv[-2:]
     cell_range = list(map(int, cell_range))
