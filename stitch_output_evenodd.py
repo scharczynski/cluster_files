@@ -1,4 +1,4 @@
-import util
+import maxlikespy.util as util
 import sys
 
 
