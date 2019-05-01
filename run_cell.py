@@ -128,37 +128,34 @@ def run_script(cell_range):
     # pipeline.compare_models("Const", "Time", 0.01)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/salz"
-    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/salz"
-    # time_info = [1000, 21000]
-    # data_processor = DataProcessor(
-    #     path_to_data, cell_range, time_info=time_info)
-    # n = 2
-    # mean_delta = 0.10 * (time_info[1] - time_info[0])
-    # mean_bounds = (
-    #     (time_info[0] - mean_delta),
-    #     (time_info[1] + mean_delta))
-    # solver_params = {
-    #     "niter": 200,
-    #     "stepsize": 1000,
-    #     "interval": 10,
-    #     "method": "TNC",
-    #     "use_jac": True,
-    # }
-    # bounds = {
-    #     "a_1": [0, 1 / n],
-    #     "ut": [mean_bounds[0], mean_bounds[1]],
-    #     "st": [10, 50000],
-    #     "a_0": [10**-10, 1 / n]
-    # }
-    # bounds_c = {"a_0": [10**-10, 0.999]}
-    # pipeline = AnalysisPipeline(cell_range, data_processor, [
-    #                             "Const", "Time"], 0)
-    # pipeline.set_model_bounds("Time", bounds)
-    # pipeline.set_model_bounds("Const", bounds_c)
-    # pipeline.fit_even_odd(solver_params)
-    # pipeline.compare_even_odd("Const", "Time", 0.01)
-    # pipeline.fit_all_models(solver_params)
-    # pipeline.compare_models("Const", "Time", 0.01)
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/salz"
+    time_info = [1000, 21000]
+    data_processor = analysis.DataProcessor(
+        path_to_data, cell_range, time_info=time_info)
+    solver_params = {
+        "niter": 200,
+        "stepsize": 1000,
+        "interval": 10,
+        "method": "TNC",
+        "use_jac": True,
+    }
+    bounds = {
+        "a_1": [0, 1 / 2],
+        "ut": [0, 42000,],
+        "st": [10, 50000],
+        "a_0": [10**-10, 1 / 2]
+    }
+    bounds_c = {"a_0": [10**-10, 0.999]}
+    pipeline = analysis.AnalysisPipeline(cell_range, data_processor, [
+                                "Const", "Time"], 0)
+    pipeline.set_model_bounds("Time", bounds)
+    pipeline.set_model_bounds("Const", bounds_c)
+    pipeline.set_model_x0("Time", [1e-5, 500, 500, 1e-5])
+    pipeline.set_model_x0("Const", [1e-5])
+    pipeline.fit_even_odd(solver_params)
+    pipeline.compare_even_odd("Const", "Time", 0.01)
+    pipeline.fit_all_models(solver_params)
+    pipeline.compare_models("Const", "Time", 0.01)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/cromer"
     # # path_to_data = '/projectnb/ecog-eeg/stevechar/data/cromer'
@@ -230,45 +227,45 @@ def run_script(cell_range):
     # pipeline.compare_models("Const", "Time", 0.01)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/cromer"
-    path_to_data =  "/projectnb/ecog-eeg/stevechar/data/cromer"
-    # with open(path_to_data+'/number_of_trials.json', 'r') as f:
-    #     num = json.load(f)
-    # x = np.full(max(num), 400)
-    # y = np.full(max(num), 2000)
+    # # path_to_data =  "/projectnb/ecog-eeg/stevechar/data/cromer"
+    # # with open(path_to_data+'/number_of_trials.json', 'r') as f:
+    # #     num = json.load(f)
+    # # x = np.full(max(num), 400)
+    # # y = np.full(max(num), 2000)
 
-    # trial_lengths = np.array(list(zip(x,y)))
-    # with open(path_to_data+'/trial_lengths.json', 'w') as f:
-    #     json.dump(trial_lengths.tolist(), f)
+    # # trial_lengths = np.array(list(zip(x,y)))
+    # # with open(path_to_data+'/trial_lengths.json', 'w') as f:
+    # #     json.dump(trial_lengths.tolist(), f)
     
-    data_processor = analysis.DataProcessor(
-        path_to_data, cell_range, time_info=[400,2000])
-    n_t = 2.
-    solver_params = {
-        "niter": 110,
-        "stepsize": 1000,
-        "interval": 10,
-        "method": "TNC",
-        "use_jac": True,
-    }
-    bounds = {
-        "a_1": [10**-10, 1 / n_t],
-        "ut": [0., 6000.],
-        "st": [10., 5000.],
-        "a_0": [10**-10, 1 / n_t]
-    }
-    bounds_c = {"a_0": [10**-10, 0.999]}
-    pipeline = analysis.AnalysisPipeline(cell_range, data_processor, [
-                                "Time", "Const"], 0)
-    # pipeline.show_rasters()
+    # data_processor = analysis.DataProcessor(
+    #     path_to_data, cell_range, time_info=[400,2000])
+    # n_t = 2.
+    # solver_params = {
+    #     "niter": 110,
+    #     "stepsize": 1000,
+    #     "interval": 10,
+    #     "method": "TNC",
+    #     "use_jac": True,
+    # }
+    # bounds = {
+    #     "a_1": [10**-10, 1 / n_t],
+    #     "ut": [0., 6000.],
+    #     "st": [10., 5000.],
+    #     "a_0": [10**-10, 1 / n_t]
+    # }
+    # bounds_c = {"a_0": [10**-10, 0.999]}
+    # pipeline = analysis.AnalysisPipeline(cell_range, data_processor, [
+    #                             "Time", "Const"], 0)
+    # # pipeline.show_rasters()
 
-    pipeline.set_model_bounds("Time", bounds)
-    pipeline.set_model_bounds("Const", bounds_c)
-    pipeline.set_model_x0("Time", [1e-5, 400, 100, 1e-5])
-    pipeline.set_model_x0("Const", [1e-5])
-    pipeline.fit_even_odd(solver_params)
-    pipeline.compare_even_odd("Const", "Time", 0.01)
-    pipeline.fit_all_models(solver_params=solver_params)
-    pipeline.compare_models("Const", "Time", 0.01)
+    # pipeline.set_model_bounds("Time", bounds)
+    # pipeline.set_model_bounds("Const", bounds_c)
+    # pipeline.set_model_x0("Time", [1e-5, 400, 100, 1e-5])
+    # pipeline.set_model_x0("Const", [1e-5])
+    # pipeline.fit_even_odd(solver_params)
+    # pipeline.compare_even_odd("Const", "Time", 0.01)
+    # pipeline.fit_all_models(solver_params=solver_params)
+    # pipeline.compare_models("Const", "Time", 0.01)
 
     
 
@@ -552,6 +549,7 @@ def run_script(cell_range):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
+# run_script(range(10,12))
 if __name__ == "__main__":
     cell_range = sys.argv[-2:]
     cell_range = list(map(int, cell_range))
