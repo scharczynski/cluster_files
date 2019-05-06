@@ -383,7 +383,7 @@ def run_script(cell_range):
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 100,
+        "niter": 30,
         "stepsize": 5000,
         "interval": 10,
         "method": "TNC",
@@ -412,9 +412,9 @@ def run_script(cell_range):
     pipeline.set_model_bounds("ConstVariable",  {"a_0":[10**-10, 1]})
     import numpy as np
     import json
-    with open("/Users/stevecharczynski/workspace/data/sheehan/second_set/s25/x_abs.json", 'rb') as f:
+    with open("/projectnb/ecog-eeg/stevechar/data/sheehan/s25/x_abs.json", 'rb') as f:
         abs_pos = np.array(json.load(f))
-    with open("/Users/stevecharczynski/workspace/data/sheehan/second_set/s25/x_rel.json", 'rb') as f:
+    with open("/projectnb/ecog-eeg/stevechar/data/sheehan/s25/x_rel.json", 'rb') as f:
         rel_pos = np.array(json.load(f))
     pipeline.set_model_info("AbsPosVariable", "abs_pos", abs_pos, True)
     pipeline.set_model_info("RelPosVariable", "rel_pos", rel_pos, True)
