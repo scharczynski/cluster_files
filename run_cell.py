@@ -258,7 +258,7 @@ def run_script(cell_range):
     # bounds_c = {"a_0": [10**-10, 0.999]}
     # pipeline = analysis.Pipeline(cell_range, data_processor, [
     #                             "Time", "Const"], 0)
-    # pipeline.show_rasters()
+    # # pipeline.show_rasters()
 
     # pipeline.set_model_bounds("Time", bounds)
     # pipeline.set_model_bounds("Const", bounds_c)
@@ -376,8 +376,8 @@ def run_script(cell_range):
     # pipeline.fit_all_models(solver_params=solver_params)
     # pipeline.compare_models("Const", "TimeVariableLength", 0.01)
 
-    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/second_set/s25"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/s25"
+    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/second_set/s23"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/s23"
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)
@@ -412,9 +412,9 @@ def run_script(cell_range):
     pipeline.set_model_bounds("ConstVariable",  {"a_0":[10**-10, 1]})
     import numpy as np
     import json
-    with open("/projectnb/ecog-eeg/stevechar/data/sheehan/s25/x_abs.json", 'rb') as f:
+    with open(path_to_data+"/x_abs.json", 'rb') as f:
         abs_pos = np.array(json.load(f))
-    with open("/projectnb/ecog-eeg/stevechar/data/sheehan/s25/x_rel.json", 'rb') as f:
+    with open(path_to_data+"/x_rel.json", 'rb') as f:
         rel_pos = np.array(json.load(f))
     pipeline.set_model_info("AbsPosVariable", "abs_pos", abs_pos, True)
     pipeline.set_model_info("RelPosVariable", "rel_pos", rel_pos, True)
@@ -546,7 +546,7 @@ def run_script(cell_range):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-# run_script(range(14,15))
+# run_script(range(58,59))
 if __name__ == "__main__":
     cell_range = sys.argv[-2:]
     cell_range = list(map(int, cell_range))
