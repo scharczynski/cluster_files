@@ -267,7 +267,7 @@ def run_script(cell_range):
     # # pipeline.fit_even_odd(solver_params)
     # # pipeline.compare_even_odd("Const", "Time", 0.01)
     # pipeline.fit_all_models(solver_params=solver_params)
-    # pipeline.compare_models("Const", "Time", 0.01)
+    # pipeline.compare_models("Const", "Time", p_value=0.01, smoother_value=1)
 
     
 
@@ -376,8 +376,8 @@ def run_script(cell_range):
     # pipeline.fit_all_models(solver_params=solver_params)
     # pipeline.compare_models("Const", "TimeVariableLength", 0.01)
 
-    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/second_set/s23"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/s23"
+    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/second_set/s19"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/s19"
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)
@@ -419,9 +419,9 @@ def run_script(cell_range):
     pipeline.set_model_info("AbsPosVariable", "abs_pos", abs_pos, True)
     pipeline.set_model_info("RelPosVariable", "rel_pos", rel_pos, True)
     pipeline.fit_all_models(solver_params=solver_params)
-    pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01)
-    pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01)
-    pipeline.compare_models("ConstVariable", "TimeVariableLength", 0.01)
+    pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01, smoother_value=100)
+    pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01, smoother_value=100)
+    pipeline.compare_models("ConstVariable", "TimeVariableLength", 0.01, smoother_value=100)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/lin_track_s1"
     # # path_to_data =  "/projectnb/ecog-eeg/stevechar/data/cromer"
@@ -546,7 +546,7 @@ def run_script(cell_range):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-# run_script(range(58,59))
+# run_script(range(10,11))
 if __name__ == "__main__":
     cell_range = sys.argv[-2:]
     cell_range = list(map(int, cell_range))
