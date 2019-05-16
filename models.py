@@ -738,7 +738,7 @@ class AbsPosVariable(Model):
         super().__init__(data)
         self.spikes = data['spikes']
         self.param_names = ["a_1", "ut", "st", "a_0"]
-        self.x0 = [1e-5, 100, 100, 1e-5]
+        # self.x0 = [1e-5, 100, 100, 1e-5]
 
     def info_callback(self):
         # if "trial_length" in self.info:
@@ -783,7 +783,7 @@ class RelPosVariable(Model):
         super().__init__(data)
         self.spikes = data['spikes']
         self.param_names = ["a_1", "ut", "st", "a_0"]
-        self.x0 = [1e-5, 100, 100, 1e-5]
+        # self.x0 = [1e-5, 100, 100, 1e-5]
 
     def info_callback(self):
         # if "trial_length" in self.info:
@@ -833,7 +833,7 @@ class ConstVariable(Model):
         super().__init__(data)
         self.spikes = data['spikes']
         self.param_names = ["a_0"]
-        self.x0 = [0.1]
+        # self.x0 = [0.1]
 
     # def info_callback(self):
         # if "trial_length" in self.info:
