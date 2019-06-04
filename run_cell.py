@@ -426,7 +426,7 @@ def run_script(cell_range, session):
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 2,
+        "niter": 300,
         "stepsize": 5000,
         "interval": 10,
         "method": "TNC",
@@ -437,7 +437,7 @@ def run_script(cell_range, session):
     bounds_pos = {
         "a_v": [10**-10, 1 / n_t],
         "ut": [0., 100.],
-        "st": [10., 2000.],
+        "st": [0.1, 100.],
         "a_0": [10**-10, 1 / n_t]
     }
     # bounds_t = {
@@ -453,8 +453,8 @@ def run_script(cell_range, session):
     pipeline.set_model_bounds("AbsPosVariable", bounds_pos)
     pipeline.set_model_bounds("RelPosVariable", bounds_pos)
     pipeline.set_model_bounds("ConstVariable",  {"a_0":[10**-10, 1]})
-    pipeline.set_model_x0("AbsPosVariable", [1e-5, 20, 10, 1e-5])
-    pipeline.set_model_x0("RelPosVariable", [1e-5, 20, 10, 1e-5])
+    pipeline.set_model_x0("AbsPosVariable", [1e-5, 20, 1, 1e-5])
+    pipeline.set_model_x0("RelPosVariable", [1e-5, 20, 1, 1e-5])
     pipeline.set_model_x0("ConstVariable", [1e-5])
     # pipeline.show_rasters()
     import numpy as np
@@ -597,8 +597,7 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
 if __name__ == "__main__":
-    session = sys.argv[0]
-
+    session = sys.argv[-3]
     cell_range = sys.argv[-2:]
     cell_range = list(map(int, cell_range))
     cell_range = range(cell_range[0], cell_range[1]+1)
