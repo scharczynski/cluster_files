@@ -425,7 +425,7 @@ def run_script(cell_range, save_dir):
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 10,
+        "niter": 300,
         "stepsize": 5000,
         "interval": 10,
         "method": "TNC",
@@ -435,7 +435,7 @@ def run_script(cell_range, save_dir):
     }
     bounds_pos = {
         "a_v": [10**-10, 1 / n_t],
-        "ut": [0., 200.],
+        "ut": [0., 100.],
         "st": [10., 2000.],
         "a_0": [10**-10, 1 / n_t]
     }
