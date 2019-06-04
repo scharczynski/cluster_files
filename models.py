@@ -347,6 +347,41 @@ class CatTime(Model):
 
         return 1 - (x[3] + x[4] + x[2] + x[5] + x[6])
 
+class PlaceField(Model):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.spikes = data['spikes']
+        self.param_names = ["ut_x", "st_x","ut_y", "st_y", "a_0", "a_1"]
+
+    def info_callback(self):
+        if "pos" in self.info:
+            self.posx = self.info["pos"][:,0]
+            self.posy = self.info["pos"][:,1]
+
+    def objective(self, x):
+        fun = self.model(x)
+        obj = np.sum(self.spikes * (-np.log(fun)) +
+                      (1 - self.spikes) * (-np.log(1 - (fun))))
+        
+        return obj
+
+    def model(self, x):
+        utx, stx, uty, sty, a_0, a_1 = x
+
+        self.function = (
+            (a_1 * np.exp(-(np.power(self.posx - utx, 2.) / (2 * np.power(stx, 2.)) +
+                np.power(self.posy - uty, 2.) / (2 * np.power(sty, 2.))))) + a_0)
+        return self.function
+
+    def plot_model(self, x):
+        utx, stx, uty, sty, a_0, a_1 = x
+
+        self.function = (
+            (a_1 * np.exp(-(np.power(self.posx - utx, 2.) / (2 * np.power(stx, 2.)) +
+                np.power(self.posy - uty, 2.) / (2 * np.power(sty, 2.))))) + a_0)
+        return self.function
+
 
 
 class ConstCat(Model):
@@ -737,7 +772,7 @@ class AbsPosVariable(Model):
     def __init__(self, data):
         super().__init__(data)
         self.spikes = data['spikes']
-        self.param_names = ["a_1", "ut", "st", "a_0"]
+        self.param_names = ["a_v", "ut", "st", "a_0"]
         # self.x0 = [1e-5, 100, 100, 1e-5]
 
     def info_callback(self):
@@ -755,6 +790,21 @@ class AbsPosVariable(Model):
                 self.pos2[trial][:len(pos[trial])] = (np.array(pos[trial], dtype=float))
             self.info.pop("abs_pos")
 
+        if "velocity" in self.info:
+            velocity = self.info["velocity"]
+            v_max = 0
+            for trial in self.info["velocity"]:
+                new = max(trial)
+                if new > v_max:
+                    v_max = new
+            longest_trial = max(list(map(lambda x: len(x), velocity)))   
+            self.velocity = np.zeros((velocity.shape[0], longest_trial), dtype=float)
+            for trial in range(len(velocity)):
+                self.velocity[trial][:len(velocity[trial])] = np.array(velocity[trial], dtype=float)
+            # velocity = np.array([np.array(xi) for xi in self.info["velocity"]])
+            self.velocity = self.velocity/v_max
+            self.info.pop("velocity")
+
     def objective(self, x):
 
         fun = self.model(x)
@@ -766,10 +816,10 @@ class AbsPosVariable(Model):
         return total
 
     def model(self, x):
-        a, ut, st, o = x
+        a_v, ut, st, o = x
 
         self.function = (
-            (a * np.exp(-np.power(self.pos2 - ut, 2.) / (2 * np.power(st, 2.)))) + o)
+            (a_v*self.velocity * np.exp(-np.power(self.pos2 - ut, 2.) / (2 * np.power(st, 2.)))) + o)
         return self.function
 
     def plot_model(self, x):
@@ -782,7 +832,7 @@ class RelPosVariable(Model):
     def __init__(self, data):
         super().__init__(data)
         self.spikes = data['spikes']
-        self.param_names = ["a_1", "ut", "st", "a_0"]
+        self.param_names = ["a_v", "ut", "st", "a_0"]
         # self.x0 = [1e-5, 100, 100, 1e-5]
 
     def info_callback(self):
@@ -800,6 +850,21 @@ class RelPosVariable(Model):
                 self.pos2[trial][:len(pos[trial])] = (np.array(pos[trial], dtype=float))
             self.info.pop("rel_pos")
 
+        if "velocity" in self.info:
+            velocity = self.info["velocity"]
+            v_max = 0
+            for trial in self.info["velocity"]:
+                new = max(trial)
+                if new > v_max:
+                    v_max = new
+            longest_trial = max(list(map(lambda x: len(x), velocity)))   
+            self.velocity = np.zeros((velocity.shape[0], longest_trial), dtype=float)
+            for trial in range(len(velocity)):
+                self.velocity[trial][:len(velocity[trial])] = np.array(velocity[trial], dtype=float)
+            # velocity = np.array([np.array(xi) for xi in self.info["velocity"]])
+            self.velocity = self.velocity/v_max
+            self.info.pop("velocity")
+
     def objective(self, x):
 
         fun = self.model(x)
@@ -814,12 +879,12 @@ class RelPosVariable(Model):
         return total
 
     def model(self, x):
-        a, ut, st, o = x
+        a_v, ut, st, o = x
 
         # self.pos = np.array(list(map(lambda x: np.array(x), self.info["abs_pos"][11])),dtype=float)
         # self.function = np.array((map(lambda x: (a * np.exp(-np.power(self.pos2[x, :self.trial_lengths[x]] - ut, 2.) / (2 * np.power(st, 2.)))) + o, range(self.num_trials))))
         self.function = (
-            (a * np.exp(-np.power(self.pos2 - ut, 2.) / (2 * np.power(st, 2.)))) + o)
+            (a_v * self.velocity * np.exp(-np.power(self.pos2 - ut, 2.) / (2 * np.power(st, 2.)))) + o)
         return self.function
 
     def plot_model(self, x):
