@@ -5,7 +5,7 @@ import maxlikespy.util as util
 import maxlikespy.plotting as plotting
 
 
-def run_script(cell_range, save_dir):
+def run_script(cell_range, session):
 
     # path_to_data = '/Users/stevecharczynski/workspace/data/jay/2nd_file'
     # # path_to_data = "/projectnb/ecog-eeg/stevechar/data/jay"
@@ -418,14 +418,15 @@ def run_script(cell_range, save_dir):
     # plotting.plot_summed_2d(data_processor.spikes_binned[8], [300,300], pos, model_dict["PlaceField"][8].fit)
     # pipeline.compare_models("Const", "PlaceField", 0.01, smoother_value=1000)
 
-    path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/lin_pos_set/s11"
-    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/s25"
+    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/lin_pos_set/s11"
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/{0}".format(session)
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/set_3/{0}".format(session)
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 300,
+        "niter": 2,
         "stepsize": 5000,
         "interval": 10,
         "method": "TNC",
@@ -596,8 +597,9 @@ def run_script(cell_range, save_dir):
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
 if __name__ == "__main__":
-    save_dir = sys.argv[0]
+    session = sys.argv[0]
+
     cell_range = sys.argv[-2:]
     cell_range = list(map(int, cell_range))
     cell_range = range(cell_range[0], cell_range[1]+1)
-    run_script(cell_range, save_dir)
+    run_script(cell_range, session)

@@ -18,53 +18,53 @@ numJobs=$((last-first))     # Count the jobs
 myJobIDs=""        
                     # Initialize an empty list of job IDs
 for i in `seq 0 15`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s11")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s11")
 done
 
 for i in `seq 0 18`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s14")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s14")
 done
 
 for i in `seq 0 15`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s15")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s15")
 done
 
 for i in `seq 0 11`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s16")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s16")
 done
 
 for i in `seq 0 10`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s17")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s17")
 done
 
 for i in `seq 0 33`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s21")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s21")
 done
 
 for i in `seq 0 36`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s22")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s22")
 done
 
 for i in `seq 0 40`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s23")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s23")
 done
 
 for i in `seq 0 53`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s24")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s24")
 done
 
 for i in `seq 0 61`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s26")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s26")
 done
 
 for i in `seq 0 37`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s28")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s28")
 done
 
 for i in `seq 0 30`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s30")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s30")
 done
 
 for i in `seq 0 52`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "/projectnb/ecog-eeg/stevechar/sheehan_runs/s31")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i s31")
 done
