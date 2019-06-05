@@ -420,7 +420,7 @@ def run_script(cell_range, session):
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/lin_pos_set/s11"
     save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/{0}".format(session)
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/set_3/{0}".format(session)
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/june419/{0}".format(session)
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)

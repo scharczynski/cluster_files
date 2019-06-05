@@ -21,6 +21,10 @@ for i in `seq 0 15`; do
     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s11")
 done
 
+for i in `seq 0 21`; do
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s12")
+done
+
 for i in `seq 0 18`; do
     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s14")
 done
