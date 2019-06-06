@@ -772,6 +772,51 @@ class AbsPosVariable(Model):
     def __init__(self, data):
         super().__init__(data)
         self.spikes = data['spikes']
+        self.param_names = ["a_1", "ut", "st", "a_0"]
+        # self.x0 = [1e-5, 100, 100, 1e-5]
+
+    def info_callback(self):
+        # if "trial_length" in self.info:
+        #     self.trial_lengths = self.info["trial_length"]
+        #     for ind, trial in enumerate(self.trial_lengths):
+        #         self.spikes[ind][trial:] = 0
+        #     self.info.pop("trial_length")
+        
+        if "abs_pos" in self.info:
+            pos = self.info["abs_pos"]
+            longest_trial = max(list(map(lambda x: len(x), pos)))
+            self.pos2 = np.zeros((pos.shape[0], longest_trial),dtype=float)
+            for trial in range(len(pos)):
+                self.pos2[trial][:len(pos[trial])] = (np.array(pos[trial], dtype=float))
+            self.info.pop("abs_pos")
+
+    def objective(self, x):
+
+        fun = self.model(x)
+        total = 0
+        for ind, trial in enumerate(self.spikes):
+                total+= np.sum(trial[self.window[ind, 0]:self.window[ind, 1]] * (-np.log(fun[ind,self.window[ind, 0]:self.window[ind, 1]])) +
+                            (1 - trial[self.window[ind, 0]:self.window[ind, 1]]) * (-np.log(1 - (fun[ind,self.window[ind, 0]:self.window[ind, 1]]))))
+
+        return total
+
+    def model(self, x):
+        a_v, ut, st, o = x
+
+        self.function = (
+            (a_1 * np.exp(-np.power(self.pos2 - ut, 2.) / (2 * np.power(st, 2.)))) + o)
+        return self.function
+
+    def plot_model(self, x):
+        a, ut, st, o = x
+
+        return ((a * np.exp(-np.power(self.t - ut, 2.) / (2 * np.power(st, 2.)))) + o)
+
+class AbsPosVelocity(Model):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.spikes = data['spikes']
         self.param_names = ["a_v", "ut", "st", "a_0"]
         # self.x0 = [1e-5, 100, 100, 1e-5]
 
@@ -827,7 +872,7 @@ class AbsPosVariable(Model):
 
         return ((a * np.exp(-np.power(self.t - ut, 2.) / (2 * np.power(st, 2.)))) + o)
      
-class RelPosVariable(Model):
+class RelPosVelocity(Model):
 
     def __init__(self, data):
         super().__init__(data)
@@ -885,6 +930,56 @@ class RelPosVariable(Model):
         # self.function = np.array((map(lambda x: (a * np.exp(-np.power(self.pos2[x, :self.trial_lengths[x]] - ut, 2.) / (2 * np.power(st, 2.)))) + o, range(self.num_trials))))
         self.function = (
             (a_v * self.velocity * np.exp(-np.power(self.pos2 - ut, 2.) / (2 * np.power(st, 2.)))) + o)
+        return self.function
+
+    def plot_model(self, x):
+        a, ut, st, o = x
+        return ((a * np.exp(-np.power(self.t - ut, 2.) / (2 * np.power(st, 2.)))) + o)
+
+
+class RelPosVariable(Model):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.spikes = data['spikes']
+        self.param_names = ["a_1", "ut", "st", "a_0"]
+        # self.x0 = [1e-5, 100, 100, 1e-5]
+
+    def info_callback(self):
+        # if "trial_length" in self.info:
+        #     self.trial_lengths = self.info["trial_length"]
+        #     for ind, trial in enumerate(self.trial_lengths):
+        #         self.spikes[ind][trial:] = np.nan
+        #     self.info.pop("trial_length")
+
+        if "rel_pos" in self.info:
+            pos = self.info["rel_pos"]
+            longest_trial = max(list(map(lambda x: len(x), pos)))
+            self.pos2 = np.zeros((pos.shape[0],longest_trial), dtype=float)
+            for trial in range(len(pos)):
+                self.pos2[trial][:len(pos[trial])] = (np.array(pos[trial], dtype=float))
+            self.info.pop("rel_pos")
+
+    def objective(self, x):
+
+        fun = self.model(x)
+        total = 0
+        # for ind, trial in enumerate(self.spikes):
+        #         total+= np.sum(trial[self.window[0][ind]:self.window[1][ind]] * (-np.log(fun[ind,self.window[0][ind]:self.window[1][ind]])) +
+        #                     (1 - trial[self.window[0][ind]:self.window[1][ind]]) * (-np.log(1 - (fun[ind,self.window[0][ind]:self.window[1][ind]]))))
+        for ind, trial in enumerate(self.spikes):
+            total+= np.sum(trial[self.window[ind, 0]:self.window[ind, 1]] * (-np.log(fun[ind,self.window[ind, 0]:self.window[ind, 1]])) +
+                        (1 - trial[self.window[ind, 0]:self.window[ind, 1]]) * (-np.log(1 - (fun[ind,self.window[ind, 0]:self.window[ind, 1]]))))
+
+        return total
+
+    def model(self, x):
+        a_1, ut, st, o = x
+
+        # self.pos = np.array(list(map(lambda x: np.array(x), self.info["abs_pos"][11])),dtype=float)
+        # self.function = np.array((map(lambda x: (a * np.exp(-np.power(self.pos2[x, :self.trial_lengths[x]] - ut, 2.) / (2 * np.power(st, 2.)))) + o, range(self.num_trials))))
+        self.function = (
+            (a_1 * np.exp(-np.power(self.pos2 - ut, 2.) / (2 * np.power(st, 2.)))) + o)
         return self.function
 
     def plot_model(self, x):

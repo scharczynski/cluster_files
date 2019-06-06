@@ -419,8 +419,8 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Const", "PlaceField", 0.01, smoother_value=1000)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/lin_pos_set/s11"
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/{0}".format(session)
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/june419/{0}".format(session)
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/6619_noneg/{0}".format(session)
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/6619_noneg/{0}".format(session)
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)
@@ -447,14 +447,18 @@ def run_script(cell_range, session):
     #     "a_0": [10**-10, 1 / n_t]
     # }
     pipeline = analysis.Pipeline(cell_range, data_processor, [
-                               "ConstVariable", "RelPosVariable","AbsPosVariable"], save_dir=save_dir)
+                               "ConstVariable", "RelPosVariable","AbsPosVariable", "AbsPosVelocity", "RelPosVelocity"], save_dir=save_dir)
 
     # pipeline.set_model_bounds("TimeVariableLength", bounds_t)
     pipeline.set_model_bounds("AbsPosVariable", bounds_pos)
     pipeline.set_model_bounds("RelPosVariable", bounds_pos)
+    pipeline.set_model_bounds("AbsPosVelocity", bounds_pos)
+    pipeline.set_model_bounds("RelPosVelocity", bounds_pos)
     pipeline.set_model_bounds("ConstVariable",  {"a_0":[10**-10, 1]})
     pipeline.set_model_x0("AbsPosVariable", [1e-5, 20, 1, 1e-5])
     pipeline.set_model_x0("RelPosVariable", [1e-5, 20, 1, 1e-5])
+    pipeline.set_model_x0("AbsPosVelocity", [1e-5, 20, 1, 1e-5])
+    pipeline.set_model_x0("RelPosVelocity", [1e-5, 20, 1, 1e-5])
     pipeline.set_model_x0("ConstVariable", [1e-5])
     # pipeline.show_rasters()
     import numpy as np
@@ -467,11 +471,15 @@ def run_script(cell_range, session):
         velocity = np.array(json.load(f))
     pipeline.set_model_info("AbsPosVariable", "abs_pos", abs_pos, True)
     pipeline.set_model_info("RelPosVariable", "rel_pos", rel_pos, True)
-    pipeline.set_model_info("AbsPosVariable", "velocity", velocity, True)
-    pipeline.set_model_info("RelPosVariable", "velocity", velocity, True)
+    pipeline.set_model_info("AbsPosVelocity", "abs_pos", abs_pos, True)
+    pipeline.set_model_info("RelPosVelocity", "rel_pos", rel_pos, True)
+    pipeline.set_model_info("AbsPosVelocity", "velocity", velocity, True)
+    pipeline.set_model_info("RelPosVelocity", "velocity", velocity, True)
     pipeline.fit_all_models(solver_params=solver_params)
     pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01, smoother_value=100)
     pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01, smoother_value=100)
+    pipeline.compare_models("ConstVariable", "AbsPosVelocity", 0.01, smoother_value=100)
+    pipeline.compare_models("ConstVariable", "AbsPosVelocity", 0.01, smoother_value=100)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/lin_track_s1"
     # # path_to_data =  "/projectnb/ecog-eeg/stevechar/data/cromer"
