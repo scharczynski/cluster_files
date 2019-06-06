@@ -434,8 +434,14 @@ def run_script(cell_range, session):
         "T" : 1,
         "disp":False
     }
-    bounds_pos = {
+    bounds_vel = {
         "a_v": [10**-10, 1 / n_t],
+        "ut": [0., 100.],
+        "st": [0.1, 100.],
+        "a_0": [10**-10, 1 / n_t]
+    }
+    bounds_norm = {
+        "a_1": [10**-10, 1 / n_t],
         "ut": [0., 100.],
         "st": [0.1, 100.],
         "a_0": [10**-10, 1 / n_t]
@@ -450,10 +456,10 @@ def run_script(cell_range, session):
                                "ConstVariable", "RelPosVariable","AbsPosVariable", "AbsPosVelocity", "RelPosVelocity"], save_dir=save_dir)
 
     # pipeline.set_model_bounds("TimeVariableLength", bounds_t)
-    pipeline.set_model_bounds("AbsPosVariable", bounds_pos)
-    pipeline.set_model_bounds("RelPosVariable", bounds_pos)
-    pipeline.set_model_bounds("AbsPosVelocity", bounds_pos)
-    pipeline.set_model_bounds("RelPosVelocity", bounds_pos)
+    pipeline.set_model_bounds("AbsPosVariable", bounds_norm)
+    pipeline.set_model_bounds("RelPosVariable", bounds_norm)
+    pipeline.set_model_bounds("AbsPosVelocity", bounds_vel)
+    pipeline.set_model_bounds("RelPosVelocity", bounds_vel)
     pipeline.set_model_bounds("ConstVariable",  {"a_0":[10**-10, 1]})
     pipeline.set_model_x0("AbsPosVariable", [1e-5, 20, 1, 1e-5])
     pipeline.set_model_x0("RelPosVariable", [1e-5, 20, 1, 1e-5])
