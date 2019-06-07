@@ -801,7 +801,7 @@ class AbsPosVariable(Model):
         return total
 
     def model(self, x):
-        a_v, ut, st, o = x
+        a_1, ut, st, o = x
 
         self.function = (
             (a_1 * np.exp(-np.power(self.pos2 - ut, 2.) / (2 * np.power(st, 2.)))) + o)
