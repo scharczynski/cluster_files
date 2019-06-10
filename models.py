@@ -902,10 +902,18 @@ class RelPosVelocity(Model):
                 new = max(trial)
                 if new > v_max:
                     v_max = new
+            # for uneven sheehan data
             longest_trial = max(list(map(lambda x: len(x), velocity)))   
-            self.velocity = np.zeros((velocity.shape[0], longest_trial), dtype=float)
+            if self.pos2.shape[1] < longest_trial:
+                self.velocity = np.zeros((velocity.shape[0], self.pos2.shape[1]), dtype=float)
+            elif self.pos2.shape[1] <= longest_trial:
+                self.velocity = np.zeros((velocity.shape[0], longest_trial), dtype=float)
             for trial in range(len(velocity)):
-                self.velocity[trial][:len(velocity[trial])] = np.array(velocity[trial], dtype=float)
+                if len(velocity[trial]) > self.velocity.shape[1]:
+                    insert = np.array(velocity[trial], dtype=float)[:self.velocity.shape[1]]
+                else:
+                    insert = np.array(velocity[trial], dtype=float)
+                self.velocity[trial][:len(insert)] = insert
             # velocity = np.array([np.array(xi) for xi in self.info["velocity"]])
             self.velocity = self.velocity/v_max
             self.info.pop("velocity")
