@@ -485,7 +485,7 @@ def run_script(cell_range, session):
     pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01, smoother_value=100)
     pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01, smoother_value=100)
     pipeline.compare_models("ConstVariable", "AbsPosVelocity", 0.01, smoother_value=100)
-    pipeline.compare_models("ConstVariable", "AbsPosVelocity", 0.01, smoother_value=100)
+    pipeline.compare_models("ConstVariable", "RelPosVelocity", 0.01, smoother_value=100)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/lin_track_s1"
     # # path_to_data =  "/projectnb/ecog-eeg/stevechar/data/cromer"

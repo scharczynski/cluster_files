@@ -909,12 +909,15 @@ class RelPosVelocity(Model):
             elif self.pos2.shape[1] <= longest_trial:
                 self.velocity = np.zeros((velocity.shape[0], longest_trial), dtype=float)
             for trial in range(len(velocity)):
-                if len(velocity[trial]) > self.velocity.shape[1]:
-                    insert = np.array(velocity[trial], dtype=float)[:self.velocity.shape[1]]
-                else:
-                    insert = np.array(velocity[trial], dtype=float)
+                # if len(velocity[trial]) > self.velocity.shape[1]:
+                #     insert = np.array(velocity[trial], dtype=float)[:self.velocity.shape[1]]
+                # else:
+                insert = np.array(velocity[trial], dtype=float)
                 self.velocity[trial][:len(insert)] = insert
-            # velocity = np.array([np.array(xi) for xi in self.info["velocity"]])
+            # for trial in range(len(velocity)):
+            #     insert = np.array(velocity[trial], dtype=float)
+            #     self.velocity[trial][:len(insert)] = insert
+            velocity = np.array([np.array(xi) for xi in self.info["velocity"]])
             self.velocity = self.velocity/v_max
             self.info.pop("velocity")
 
