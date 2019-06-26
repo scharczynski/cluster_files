@@ -443,8 +443,11 @@ def run_script(cell_range, session):
     pipeline.set_model_x0("Time", [1e-5, 10000, 1500, 1e-5])
     pipeline.set_model_x0("Const", [1e-5])
     # pipeline.show_rasters()
+    pipeline.fit_even_odd(solver_params=solver_params)
     pipeline.fit_all_models(solver_params=solver_params)
-    pipeline.compare_models("Const", "Time", 0.01, smoother_value=1000)
+    pipeline.compare_models("Const", "Time", 0.001, smoother_value=1000)
+    pipeline.compare_even_odd("Const", "Time", 0.001)
+
 
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/fixed_0/s23"
