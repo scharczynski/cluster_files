@@ -419,8 +419,8 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Const", "PlaceField", 0.01, smoother_value=1000)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/bulkin/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/bolkan/40s_delay/"
-    data_processor = analysis.DataProcessor(path_to_data, cell_range, [0, 40000])
+    path_to_data = "/projectnb/ecog-eeg/stevechar/bolkan/cluster_files/"
+    data_processor = analysis.DataProcessor(path_to_data, cell_range, [0, 60000])
     solver_params = {
         "niter": 300,
         "stepsize": 5000,
@@ -432,15 +432,15 @@ def run_script(cell_range, session):
     }
     bounds_vel = {
         "a_1": [10**-10, 1 / 2],
-        "ut": [0., 50000.],
-        "st": [100, 70000.],
+        "ut": [0., 70000.],
+        "st": [100, 80000.],
         "a_0": [10**-10, 1 / 2]
     }
     pipeline = analysis.Pipeline(cell_range, data_processor, [
                                "Const", "Time"])
     pipeline.set_model_bounds("Time", bounds_vel)
     pipeline.set_model_bounds("Const", {"a_0":[10**-10, 1]})
-    pipeline.set_model_x0("Time", [1e-5, 10000, 1500, 1e-5])
+    pipeline.set_model_x0("Time", [1e-5, 20000, 1000, 1e-5])
     pipeline.set_model_x0("Const", [1e-5])
     # pipeline.show_rasters()
     pipeline.fit_even_odd(solver_params=solver_params)
