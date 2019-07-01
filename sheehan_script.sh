@@ -72,3 +72,19 @@ done
 for i in `seq 0 52`; do
     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s31")
 done
+
+for i in `seq 0 27`; do
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s32")
+done
+
+for i in `seq 0 27`; do
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s35")
+done
+
+for i in `seq 0 24`; do
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s36")
+done
+
+for i in `seq 0 3`; do
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s37")
+done    
