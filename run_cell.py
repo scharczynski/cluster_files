@@ -457,10 +457,10 @@ def run_script(cell_range, session):
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
-        path_to_data, cell_range)
+        path_to_data, cell_range, window=time_info)
     n_t = 2.
     solver_params = {
-        "niter": 500,
+        "niter": 5,
         "stepsize": 1000,
         "interval": 10,
         "method": "TNC",
