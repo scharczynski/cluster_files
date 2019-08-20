@@ -496,7 +496,7 @@ def run_script(cell_range, session):
     pipeline.fit_even_odd(solver_params=solver_params)
     pipeline.fit_all_models(solver_params=solver_params)
     pipeline.compare_even_odd("Const", "Time", 0.01)
-    pipeline.compare_even_odd("Const", "Time", 0.01)
+    # pipeline.compare_even_odd("Const", "Time", 0.01)
     pipeline.compare_models("Const", "Time", 0.01, smoother_value=100)
 
 
