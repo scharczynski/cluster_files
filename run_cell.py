@@ -529,7 +529,7 @@ def run_script(cell_range, session):
         "a_0": [10**-10, 1 / n]
     }
     pipeline = analysis.Pipeline(cell_range, data_processor, [
-        "ConstVariable", "TimeVariableLength"])
+        "ConstVariable", "TimeVariableLength"], save_dir=save_dir)
     # pipeline = analysis.Pipeline(cell_range, data_processor, [
     #     "ConstVariable", "RelPosVariable"], save_dir=save_dir)
 
