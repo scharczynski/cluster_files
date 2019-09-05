@@ -747,9 +747,9 @@ def run_script(cell_range, session):
 
 # run_script(range(3,4), "s23")
 if __name__ == "__main__":
-    session = sys.argv[-3]
+    session = sys.argv[2]
     # session = "bolkan"
-    cell_range = sys.argv[-2:]
+    cell_range = sys.argv[1]
     cell_range = list(map(int, cell_range))
     cell_range = range(cell_range[0], cell_range[1]+1)
     run_script(cell_range, session)
