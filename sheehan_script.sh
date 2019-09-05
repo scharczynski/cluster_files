@@ -17,74 +17,74 @@ last = $2
 numJobs=$((last-first))     # Count the jobs
 myJobIDs=""        
                     # Initialize an empty list of job IDs
-for i in `seq 0 15`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s11")
-done
-
-for i in `seq 0 21`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s12")
-done
-
-for i in `seq 0 18`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s14")
-done
-
-for i in `seq 0 15`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s15")
+for i in `seq 0 11`; do
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "2")
 done
 
 for i in `seq 0 11`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s16")
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "6")
 done
 
-for i in `seq 0 10`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s17")
+for i in `seq 0 11`; do
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "8")
 done
 
-for i in `seq 0 33`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s21")
+for i in `seq 0 49`; do
+    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "28")
 done
 
-for i in `seq 0 36`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s22")
-done
+# for i in `seq 0 11`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s16")
+# done
 
-for i in `seq 0 40`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s23")
-done
+# for i in `seq 0 10`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s17")
+# done
 
-for i in `seq 0 53`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s24")
-done
+# for i in `seq 0 33`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s21")
+# done
 
-for i in `seq 0 61`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s26")
-done
+# for i in `seq 0 36`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s22")
+# done
 
-for i in `seq 0 37`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s28")
-done
+# for i in `seq 0 40`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s23")
+# done
 
-for i in `seq 0 30`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s30")
-done
+# for i in `seq 0 53`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s24")
+# done
 
-for i in `seq 0 52`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s31")
-done
+# for i in `seq 0 61`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s26")
+# done
 
-for i in `seq 0 27`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s32")
-done
+# for i in `seq 0 37`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s28")
+# done
 
-for i in `seq 0 27`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s35")
-done
+# for i in `seq 0 30`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s30")
+# done
 
-for i in `seq 0 24`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s36")
-done
+# for i in `seq 0 52`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s31")
+# done
 
-for i in `seq 0 3`; do
-    jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s37")
-done    
+# for i in `seq 0 27`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s32")
+# done
+
+# for i in `seq 0 27`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s35")
+# done
+
+# for i in `seq 0 24`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s36")
+# done
+
+# for i in `seq 0 3`; do
+#     jobID_full=$(qsub -N "cell_$i" ./run_one_cell.sh $i "s37")
+# done    
