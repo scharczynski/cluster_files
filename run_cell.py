@@ -549,8 +549,8 @@ def run_script(cell_range, session):
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/final_dataset/inbound/2"
     # save_dir = "/Users/stevecharczynski/Desktop/test/"
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/final_dataset/lights0_move0/{0}".format(session)
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/final_dataset/lights0_move0/{0}".format(session)
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/final_dataset/lights0_move0/inbound/{0}".format(session)
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/final_dataset/lights0_move0/inbound/{0}".format(session)
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
@@ -747,9 +747,14 @@ def run_script(cell_range, session):
 
 # run_script(range(3,4), "s23")
 if __name__ == "__main__":
-    session = sys.argv[2]
-    # session = "bolkan"
-    cell_range = sys.argv[1]
+    # session = sys.argv[2]
+    # # session = "bolkan"
+    # cell_range = sys.argv[1]
+    # cell_range = list(map(int, cell_range))
+    # cell_range = range(cell_range[0], cell_range[1]+1)
+    # run_script(cell_range, session)
+    session = sys.argv[-3]
+    cell_range = sys.argv[-2:]
     cell_range = list(map(int, cell_range))
     cell_range = range(cell_range[0], cell_range[1]+1)
     run_script(cell_range, session)
