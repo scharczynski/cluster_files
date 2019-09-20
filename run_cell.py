@@ -594,17 +594,17 @@ def run_script(cell_range, session):
 
 
 
-    path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/final_dataset/lights1_move1/inbound/"
-    save_dir = "/Users/stevecharczynski/workspace/data/sheehan/final_dataset/lights1_move1/inbound/results/"
-    # save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/final_dataset/lights1_move1/outbound/"
-    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/final_dataset/lights1_move1/outbound/"
+    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/final_dataset/lights1_move1/inbound/"
+    # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/final_dataset/lights1_move1/inbound/results/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/final_dataset/lights1_move1/inbound/"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/final_dataset/lights1_move1/inbound/"
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 1,
+        "niter": 200,
         "stepsize": 5000,
         "interval": 10,
         "method": "TNC",
@@ -790,7 +790,7 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-run_script(range(2,5), "s23")
+# run_script(range(2,5), "s23")
 if __name__ == "__main__":
     session = sys.argv[1]
     # session = "bolkan"
