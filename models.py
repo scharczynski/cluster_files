@@ -785,7 +785,7 @@ class AbsPosVariable(Model):
         if "abs_pos" in self.info:
             pos = self.info["abs_pos"]
             longest_trial = max(list(map(lambda x: len(x), pos)))
-            self.pos2 = np.zeros((pos.shape[0], longest_trial),dtype=float)
+            self.pos2 = np.zeros((len(pos), longest_trial),dtype=float)
             for trial in range(len(pos)):
                 self.pos2[trial][:len(pos[trial])] = (np.array(pos[trial], dtype=float))
             self.info.pop("abs_pos")
@@ -966,7 +966,7 @@ class RelPosVariable(Model):
         if "rel_pos" in self.info:
             pos = self.info["rel_pos"]
             longest_trial = max(list(map(lambda x: len(x), pos)))
-            self.pos2 = np.zeros((pos.shape[0],longest_trial), dtype=float)
+            self.pos2 = np.zeros((len(pos),longest_trial), dtype=float)
             for trial in range(len(pos)):
                 self.pos2[trial][:len(pos[trial])] = (np.array(pos[trial], dtype=float))
             self.info.pop("rel_pos")
