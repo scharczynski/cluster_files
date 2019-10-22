@@ -2,7 +2,8 @@ import numpy as np
 from maxlikespy.model import Model
 import autograd.numpy as np
 import autograd.scipy.special as sse
-
+import matplotlib.pyplot as plt
+# from scipy import special as sse
 
 
 class Time(Model):
@@ -52,9 +53,9 @@ class SigmaMuTau(Model):
 
     def __init__(self, data):
         super().__init__(data)
-        self.spikes = data['spikes']
+        # self.spikes = data['spikes']
         self.param_names = ["sigma", "mu", "tau", "a_1", "a_0"]
-        self.x0 = [100, 5000, 0.001, 1e-5, 1e-5]
+        # self.x0 = [100, 5000, 0.001, 1e-5, 1e-5]
 
     def erfcx(self,x):
         
@@ -96,6 +97,337 @@ class SigmaMuTau(Model):
         
         return obj
 
+class SigmaMuTauDual(Model):
+    def __init__(self, data):
+        super().__init__(data)
+        self.param_names = ["sigma1","sigma2", "mu1", "mu2", "tau1","tau2", "a_1", "a_0"]
+        # self.t = np.tile(self.t, (self.num_trials, 1))
+
+       
+    # def info_callback(self):
+    #     self.stims = self.info["stim_identity"]
+    #     stim_matrix = np.zeros((self.spikes.shape[0], 4))
+    #     for trial, stim in enumerate(self.stims):
+    #         if stim == '0':
+    #             stim_matrix[trial][:] = [1, 0, 1, 0]
+    #         elif stim == '1':
+    #             stim_matrix[trial][:] = [1, 0, 0, 1]
+    #         elif stim == '2':
+    #             stim_matrix[trial][:] = [0, 1, 1, 0]
+    #         elif stim == '3':
+    #             stim_matrix[trial][:] = [0, 1, 0, 1]
+    #     self.stim_matrix = stim_matrix
+
+    def model(self, x, plot=False):
+        '''One thing to try is to maybe pull out self.t as a kwarg in optimize, might allow jacobian to be calculated easier
+        '''
+        s1,s2, mu1, mu2, tau1, tau2, a_1, a_0 = x
+        print(x)
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu2)/s))))
+        # )
+        l1 = 1/tau1
+        l2 = 1/tau2
+        fun1 = a_1*(np.exp((l1/2)*(2*mu1+l1*s1**2-2*self.t))*sse.erfc((mu1+l1*s1**2-self.t)/(np.sqrt(2)*s1)))
+        fun2 = a_1*(np.exp((l2/2)*(2*mu2+l2*s2**2-2*self.t))*sse.erfc((mu2+l2*s2**2-self.t)/(np.sqrt(2)*s2)))
+
+
+        # if any(np.isnan(fun1)):
+        #     print(np.where(np.isnan(fun1)))
+        return fun1 + fun2 + a_0
+
+    def objective(self, x):
+        fun = self.model(x).T
+
+        obj = np.sum(self.spikes * (-np.log(fun)) +
+                      (1 - self.spikes) * (-np.log(1 - (fun))))
+        
+        return obj
+
+    def plot_model(self, x):
+        s1, s2, mu1, mu2, tau1, tau2, a_1, a_0 = x
+        print("final fit in plot {0}".format(x))
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t[0]-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t[0]-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu2)/s))))
+        # )
+        l1 = 1/tau1
+        l2 = 1/tau2
+        fun1 = a_1*(np.exp((l1/2)*(2*mu1+l1*s1**2-2*self.t))*sse.erfc((mu1+l1*s1**2-self.t)/(np.sqrt(2)*s1)))
+        fun2 = a_1*(np.exp((l2/2)*(2*mu2+l2*s2**2-2*self.t))*sse.erfc((mu2+l2*s2**2-self.t)/(np.sqrt(2)*s2)))
+        # fun1 = a_1*(l/2 * np.exp((l/2)*(2*mu1+l*s**2-2*self.t[0]))*sse.erfc((mu1+l*s**2-self.t[0])/np.sqrt(2)*s))
+        # fun2 = a_2*(l/2 * np.exp((l/2)*(2*mu2+l*s**2-2*self.t[0]))*sse.erfc((mu2+l*s**2-self.t[0])/np.sqrt(2)*s))
+
+        return fun1 + fun2 + a_0
+
+class SigmaMuTauDualStim(Model):
+    def __init__(self, data):
+        super().__init__(data)
+        self.param_names = ["sigma1","sigma2", "mu1", "mu2", "tau1","tau2", "a_1", "a_2", "a_0"]
+        self.t = np.tile(self.t, (self.num_trials, 1))
+
+       
+    def info_callback(self):
+        self.stims = self.info["stim_identity"]
+        stim_matrix = np.zeros((self.spikes.shape[0], 4))
+        for trial, stim in enumerate(self.stims):
+            if stim == '0':
+                stim_matrix[trial][:] = [1, 0, 1, 0] #GG
+            elif stim == '1':
+                stim_matrix[trial][:] = [1, 0, 0, 1] #GE
+            elif stim == '2':
+                stim_matrix[trial][:] = [0, 1, 1, 0] #EG
+            elif stim == '3':
+                stim_matrix[trial][:] = [0, 1, 0, 1] #EE
+        self.stim_matrix = stim_matrix
+
+    def model(self, x, plot=False):
+        '''One thing to try is to maybe pull out self.t as a kwarg in optimize, might allow jacobian to be calculated easier
+        '''
+        s1,s2, mu1, mu2, tau1, tau2, a_1,a_2, a_0 = x
+        print(x)
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu2)/s))))
+        # )
+        l1 = 1/tau1
+        l2 = 1/tau2
+        fun1 = (np.exp((l1/2)*(2*mu1+l1*s1**2-2*self.t))*sse.erfc((mu1+l1*s1**2-self.t)/(np.sqrt(2)*s1)))
+        fun2 = (np.exp((l2/2)*(2*mu2+l2*s2**2-2*self.t))*sse.erfc((mu2+l2*s2**2-self.t)/(np.sqrt(2)*s2)))
+
+        fun = (a_1*((self.stim_matrix[:, 0] * fun1.T) + (self.stim_matrix[:,2] *fun2.T)) + (    
+            (a_2*((self.stim_matrix[:, 1] * fun1.T) + (self.stim_matrix[:,3] *fun2.T))) + a_0))
+        # if any(np.isnan(fun1)):
+        #     print(np.where(np.isnan(fun1)))
+        return fun
+
+    def objective(self, x):
+        fun = self.model(x).T
+
+        obj = np.sum(self.spikes * (-np.log(fun)) +
+                      (1 - self.spikes) * (-np.log(1 - (fun))))
+        
+        return obj
+
+    def plot_model(self, x):
+        s1, s2, mu1, mu2, tau1, tau2, a_1,a_2, a_0 = x
+        print("final fit in plot {0}".format(x))
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t[0]-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t[0]-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu2)/s))))
+        # # )
+        l1 = 1/tau1
+        l2 = 1/tau2
+        fun1 = (np.exp((l1/2)*(2*mu1+l1*s1**2-2*self.t))*sse.erfc((mu1+l1*s1**2-self.t)/(np.sqrt(2)*s1)))
+        fun2 = (np.exp((l2/2)*(2*mu2+l2*s2**2-2*self.t))*sse.erfc((mu2+l2*s2**2-self.t)/(np.sqrt(2)*s2)))
+
+        # fun = (a_1*((0.5*fun1.T) + (0.5*fun2.T)) + (    
+        #     (a_2*((0.5*fun1.T) + (0.5*fun2.T))) + a_0))
+        fun = (a_1*((self.stim_matrix[:, 0] * fun1.T) + (self.stim_matrix[:,2] *fun2.T)) + (    
+            (a_2*((self.stim_matrix[:, 1] * fun1.T) + (self.stim_matrix[:,3] *fun2.T))) + a_0))
+        # l1 = 1/tau1
+        # l2 = 1/tau2
+        # fun1 = a_1*(np.exp((l1/2)*(2*mu1+l1*s1**2-2*self.t[0]))*sse.erfc((mu1+l1*s1**2-self.t[0])/(np.sqrt(2)*s1)))
+        # fun2 = a_2*(np.exp((l2/2)*(2*mu2+l2*s2**2-2*self.t[0]))*sse.erfc((mu2+l2*s2**2-self.t[0])/(np.sqrt(2)*s2)))
+        # fun1 = a_1*(l/2 * np.exp((l/2)*(2*mu1+l*s**2-2*self.t[0]))*sse.erfc((mu1+l*s**2-self.t[0])/np.sqrt(2)*s))
+        # fun2 = a_2*(l/2 * np.exp((l/2)*(2*mu2+l*s**2-2*self.t[0]))*sse.erfc((mu2+l*s**2-self.t[0])/np.sqrt(2)*s))
+
+        return (np.sum(fun, axis=1)/fun.shape[1])
+
+class SigmaMuTauDualStimPos(Model):
+    def __init__(self, data):
+        super().__init__(data)
+        self.param_names = ["sigma", "mu1", "mu2", "tau", "a_1", "a_2","a_3","a_4", "a_0"]
+        self.t = np.tile(self.t, (self.num_trials, 1))
+
+       
+    def info_callback(self):
+        self.stims = self.info["stim_identity"]
+        stim_matrix = np.zeros((self.spikes.shape[0], 4))
+        for trial, stim in enumerate(self.stims):
+            if stim == '0':
+                stim_matrix[trial][:] = [1, 0, 1, 0]
+            elif stim == '1':
+                stim_matrix[trial][:] = [1, 0, 0, 1]
+            elif stim == '2':
+                stim_matrix[trial][:] = [0, 1, 1, 0]
+            elif stim == '3':
+                stim_matrix[trial][:] = [0, 1, 0, 1]
+        self.stim_matrix = stim_matrix
+
+
+    def erfcx(self,x):
+
+        if np.isscalar(x) ==  1:
+            if x < 25:
+                return sse.erfc(x) * np.exp(x*x)
+            else:
+                y = 1. / x
+                z = y * y
+                s = y*(1.+z*(-0.5+z*(0.75+z*(-1.875+z*(6.5625-29.53125*z)))))
+                return s * 0.564189583547756287
+        else:
+            over_ind = np.where(x>=25)[0]
+            good_ind = np.where(x<25)[0]
+            
+            x[good_ind] = sse.erfc(x[good_ind]) * np.exp(x[good_ind]*x[good_ind])
+            y = 1. / x[over_ind]
+            z = y * y
+            s = y*(1.+z*(-0.5+z*(0.75+z*(-1.875+z*(6.5625-29.53125*z)))))
+            x[over_ind] = s * 0.564189583547756287
+            return x
+
+    def model(self, x, plot=False):
+        '''One thing to try is to maybe pull out self.t as a kwarg in optimize, might allow jacobian to be calculated easier
+        '''
+        s, mu1, mu2, tau, a_1,a_2, a_3, a_4, a_0 = x
+        print(x)
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu2)/s))))
+        # )
+        l = 1/tau
+        fun1 = a_1*(l/2 * np.exp((l/2)*(2*mu1+l*s**2-2*self.t))*sse.erfc((mu1+l*s**2-self.t)/np.sqrt(2)*s))
+        fun2 = a_2*(l/2 * np.exp((l/2)*(2*mu2+l*s**2-2*self.t))*sse.erfc((mu2+l*s**2-self.t)/np.sqrt(2)*s))
+        fun3 = a_3*(l/2 * np.exp((l/2)*(2*mu1+l*s**2-2*self.t))*sse.erfc((mu1+l*s**2-self.t)/np.sqrt(2)*s))
+        fun4 = a_4*(l/2 * np.exp((l/2)*(2*mu2+l*s**2-2*self.t))*sse.erfc((mu2+l*s**2-self.t)/np.sqrt(2)*s))
+
+        fun = (self.stim_matrix[:, 0] * fun1.T) + (
+            (self.stim_matrix[:, 1] * fun3.T) +
+            (self.stim_matrix[:, 2] * fun2.T) +
+            (self.stim_matrix[:, 3] * fun4.T)
+        ) + a_0
+        if any(np.isnan(fun[:,0])):
+            print(np.where(np.isnan(fun)))
+        return fun
+
+    def objective(self, x):
+        fun = self.model(x).T
+
+        obj = np.sum(self.spikes * (-np.log(fun)) +
+                      (1 - self.spikes) * (-np.log(1 - (fun))))
+        
+        return obj
+
+    def plot_model(self, x):
+        s, mu1, mu2, tau, a_1,a_2,a_3, a_4, a_0 = x
+
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t[0]-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t[0]-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu2)/s))))
+        # )
+        l = 1/tau
+        fun1 = a_1*(l/2 * np.exp((l/2)*(2*mu1+l*s**2-2*self.t[0]))*sse.erfc((mu1+l*s**2-self.t[0])/np.sqrt(2)*s))
+        fun2 = a_2*(l/2 * np.exp((l/2)*(2*mu2+l*s**2-2*self.t[0]))*sse.erfc((mu2+l*s**2-self.t[0])/np.sqrt(2)*s))
+        fun3 = a_3*(l/2 * np.exp((l/2)*(2*mu1+l*s**2-2*self.t[0]))*sse.erfc((mu1+l*s**2-self.t[0])/np.sqrt(2)*s))
+        fun4 = a_4*(l/2 * np.exp((l/2)*(2*mu2+l*s**2-2*self.t[0]))*sse.erfc((mu2+l*s**2-self.t[0])/np.sqrt(2)*s))
+
+        return fun1 + fun2 + fun3 + fun4 + a_0
+
+
+class SigmaMuTauStim(Model):
+    def __init__(self, data):
+        super().__init__(data)
+        self.param_names = ["sigma", "mu", "tau", "a_1", "a_2", "a_0"]
+        self.t = np.tile(self.t, (self.num_trials, 1))
+
+       
+    def info_callback(self):
+        self.stims = self.info["stim_identity"]
+        stim_matrix = np.zeros((self.spikes.shape[0], 4))
+        for trial, stim in enumerate(self.stims):
+            if stim == '0':
+                stim_matrix[trial][:] = [1, 0, 1, 0]
+            elif stim == '1':
+                stim_matrix[trial][:] = [1, 0, 0, 1]
+            elif stim == '2':
+                stim_matrix[trial][:] = [0, 1, 1, 0]
+            elif stim == '3':
+                stim_matrix[trial][:] = [0, 1, 0, 1]
+        self.stim_matrix = stim_matrix
+
+
+    def erfcx(self,x):
+
+        if np.isscalar(x) ==  1:
+            if x < 25:
+                return sse.erfc(x) * np.exp(x*x)
+            else:
+                y = 1. / x
+                z = y * y
+                s = y*(1.+z*(-0.5+z*(0.75+z*(-1.875+z*(6.5625-29.53125*z)))))
+                return s * 0.564189583547756287
+        else:
+            over_ind = np.where(x>=25)[0]
+            good_ind = np.where(x<25)[0]
+            
+            x[good_ind] = sse.erfc(x[good_ind]) * np.exp(x[good_ind]*x[good_ind])
+            y = 1. / x[over_ind]
+            z = y * y
+            s = y*(1.+z*(-0.5+z*(0.75+z*(-1.875+z*(6.5625-29.53125*z)))))
+            x[over_ind] = s * 0.564189583547756287
+            return x
+
+    def model(self, x, plot=False):
+        '''One thing to try is to maybe pull out self.t as a kwarg in optimize, might allow jacobian to be calculated easier
+        '''
+        s, mu, tau, a_1, a_2, a_0 = x
+        print(x)
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu2)/s))))
+        # )
+        l = 1/tau
+        fun1 = a_1*(l/2 * np.exp((l/2)*(2*mu+l*s**2-2*self.t))*sse.erfc((mu+l*s**2-self.t)/np.sqrt(2)*s))
+        fun2 = a_2*(l/2 * np.exp((l/2)*(2*mu+l*s**2-2*self.t))*sse.erfc((mu+l*s**2-self.t)/np.sqrt(2)*s))
+        fun = (self.stim_matrix[:, 0] * fun1.T) + (
+            (self.stim_matrix[:, 1] * fun2.T) +
+            (self.stim_matrix[:, 2] * fun1.T) +
+            (self.stim_matrix[:, 3] * fun2.T)
+        ) + a_0
+
+        if any(np.isnan(fun[:,0])):
+            print(np.where(np.isnan(fun)))
+        return fun
+
+    def objective(self, x):
+        fun = self.model(x).T
+
+        obj = np.sum(self.spikes * (-np.log(fun)) +
+                      (1 - self.spikes) * (-np.log(1 - (fun))))
+        
+        return obj
+
+    def plot_model(self, x):
+        s, mu, tau, a_1, a_2, a_0 = x
+
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t[0]-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t[0]-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu2)/s))))
+        # )
+        l = 1/tau
+        fun1 = a_1*(l/2 * np.exp((l/2)*(2*mu+l*s**2-2*self.t[0]))*sse.erfc((mu+l*s**2-self.t[0])/np.sqrt(2)*s))
+        fun2 = a_2*(l/2 * np.exp((l/2)*(2*mu+l*s**2-2*self.t[0]))*sse.erfc((mu+l*s**2-self.t[0])/np.sqrt(2)*s))
+        return fun1 + fun2 + a_0
+
+
 class Const(Model):
 
     """Model which contains only a single offset parameter.
@@ -127,6 +459,89 @@ class Const(Model):
 
     def pso_con(self, x):
         return 1 - x
+
+class SigmaMuTauNone(Model):
+    def __init__(self, data):
+        super().__init__(data)
+        self.param_names = ["sigma", "mu", "tau", "a_1", "a_0"]
+        # self.t = np.tile(self.t, (self.num_trials, 1))
+
+       
+    def info_callback(self):
+        self.stims = self.info["stim_identity"]
+        stim_matrix = np.zeros((self.spikes.shape[0], 4))
+        for trial, stim in enumerate(self.stims):
+            if stim == '0':
+                stim_matrix[trial][:] = [1, 0, 1, 0]
+            elif stim == '1':
+                stim_matrix[trial][:] = [1, 0, 0, 1]
+            elif stim == '2':
+                stim_matrix[trial][:] = [0, 1, 1, 0]
+            elif stim == '3':
+                stim_matrix[trial][:] = [0, 1, 0, 1]
+        self.stim_matrix = stim_matrix
+
+
+    # def erfcx(self,x):
+
+    #     if np.isscalar(x) ==  1:
+    #         if x < 25:
+    #             return sse.erfc(x) * np.exp(x*x)
+    #         else:
+    #             y = 1. / x
+    #             z = y * y
+    #             s = y*(1.+z*(-0.5+z*(0.75+z*(-1.875+z*(6.5625-29.53125*z)))))
+    #             return s * 0.564189583547756287
+    #     else:
+    #         over_ind = np.where(x>=25)[0]
+    #         good_ind = np.where(x<25)[0]
+            
+    #         x[good_ind] = sse.erfc(x[good_ind]) * np.exp(x[good_ind]*x[good_ind])
+    #         y = 1. / x[over_ind]
+    #         z = y * y
+    #         s = y*(1.+z*(-0.5+z*(0.75+z*(-1.875+z*(6.5625-29.53125*z)))))
+    #         x[over_ind] = s * 0.564189583547756287
+    #         return x
+
+    def model(self, x, plot=False):
+        '''One thing to try is to maybe pull out self.t as a kwarg in optimize, might allow jacobian to be calculated easier
+        '''
+        s, mu, tau, a_1, a_0 = x
+        print(x)
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu2)/s))))
+        # )
+        l = 1/tau
+        fun = a_1*(l/2 * np.exp((l/2)*(2*mu+l*s**2-2*self.t))*sse.erfc((mu+l*s**2-self.t)/np.sqrt(2)*s))
+        # fun2 = a_2*(l/2 * np.exp((l/2)*(2*mu+l*s**2-2*self.t))*sse.erfc((mu+l*s**2-self.t)/np.sqrt(2)*s))
+        # fun = self.stim_matrix[:, 0] * fun1.T + (self.stim_matrix[:, 2] * fun1.T) + a_0
+
+        return fun + a_0
+
+    def objective(self, x):
+        fun = self.model(x).T
+
+        obj = np.sum(self.spikes * (-np.log(fun)) +
+                      (1 - self.spikes) * (-np.log(1 - (fun))))
+        
+        return obj
+
+    def plot_model(self, x):
+        s, mu, tau, a_1, a_0 = x
+
+        # fun1 = a_1*np.exp(-0.5*(np.power((self.t[0]-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu1)/s))))
+        # )
+        # fun2 = a_2*np.exp(-0.5*(np.power((self.t[0]-mu2)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu2)/s))))
+        # )
+        l = 1/tau
+        fun1 = a_1*(l/2 * np.exp((l/2)*(2*mu+l*s**2-2*self.t))*sse.erfc((mu+l*s**2-self.t)/np.sqrt(2)*s))
+        # fun2 = a_2*(l/2 * np.exp((l/2)*(2*mu+l*s**2-2*self.t[0]))*sse.erfc((mu+l*s**2-self.t[0])/np.sqrt(2)*s))
+        return fun1 + a_0
 
 
 class CatSetTime(Model):
@@ -742,8 +1157,13 @@ class TimeVariableLength(Model):
         #               (1 - trial[:self.trial_lengths[ind]]) * (-np.log(1 - (fun[:self.trial_lengths[ind]]))))
         #         total = 0
         for ind, trial in enumerate(self.spikes):
-                total+= np.sum(trial[self.window[ind, 0]:self.window[ind, 1]] * (-np.log(fun[self.window[ind, 0]:self.window[ind, 1]])) +
-                            (1 - trial[self.window[ind, 0]:self.window[ind, 1]]) * (-np.log(1 - (fun[self.window[ind, 0]:self.window[ind, 1]]))))
+                if self.window[ind, 0] < 0:
+                    min_ind = 0
+                else:
+                    min_ind = self.window[ind, 0]
+                
+                total+= np.sum(trial[min_ind:self.window[ind, 1]] * (-np.log(fun[min_ind:self.window[ind, 1]])) +
+                            (1 - trial[min_ind:self.window[ind, 1]]) * (-np.log(1 - (fun[min_ind:self.window[ind, 1]]))))
         # l = lambda x: np.sum(self.spikes[x[0]][:self.trial_lengths[x[0]]] * (-np.log(fun[:self.trial_lengths[x[0]]])) +
         #               (1 - self.spikes[x[0]][:self.trial_lengths[x[0]]]) * (-np.log(1 - (fun[:self.trial_lengths[x[0]]]))))
         # obj = map(l, enumerate(self.trial_lengths))
@@ -1084,7 +1504,7 @@ class DualPeakedRel(Model):
         if "rel_pos" in self.info:
             pos = self.info["rel_pos"]
             longest_trial = max(list(map(lambda x: len(x), pos)))
-            self.pos2 = np.zeros((pos.shape[0],longest_trial), dtype=float)
+            self.pos2 = np.zeros((len(pos),longest_trial), dtype=float)
             for trial in range(len(pos)):
                 self.pos2[trial][:len(pos[trial])] = (np.array(pos[trial], dtype=float))
             self.info.pop("rel_pos")
