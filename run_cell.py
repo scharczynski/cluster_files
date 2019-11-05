@@ -716,19 +716,49 @@ def run_script(cell_range, session):
     # # pipeline.compare_even_odd("Const", "Time", 0.01)
     # pipeline.compare_models("SigmaMuTauDual", "SigmaMuTauDualStim", 0.01, smoother_value=100)
 
+    # path_to_data = "/Users/stevecharczynski/workspace/maxlikespy/examples/input_data/"
+    # save_dir = "/Users/stevecharczynski/Desktop/test/"
+    # data_processor = analysis.DataProcessor(path_to_data, cell_range, [0, 10000])
+    # solver_params = {
+    #     "niter": 25,
+    #     "stepsize": 200,
+    #     "interval": 10,
+    #     "method": "TNC",
+    #     "use_jac": True,
+    #     "T" : 1,
+    #     "disp":False
+    # }
+    # bounds_vel = {
+    #     "a_1": [10e-10, 1 / 2],
+    #     "ut": [-1000, 12000.],
+    #     "st": [100, 20000.],
+    #     "a_0": [10e-10, 1 / 2]
+    # }
+    # pipeline = analysis.Pipeline(cell_range, data_processor, [
+    #                            "Const", "Time"], save_dir=save_dir)
+    # pipeline.set_model_bounds("Time", bounds_vel)
+    # pipeline.set_model_bounds("Const", {"a_0":[10**-10, 1]})
+    # pipeline.set_model_x0("Time", [1e-5, 2000, 200, 1e-5])
+    # pipeline.set_model_x0("Const", [1e-5])
+    # # pipeline.show_rasters()
+    # # pipeline.fit_even_odd(solver_params=solver_params)
+    # pipeline.fit_all_models(solver_params=solver_params)
+    # pipeline.compare_models("Const", "Time", 0.001, smoother_value=100)
+    # # pipeline.compare_even_odd("Const", "Time", 0.001)
 
 
-    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/fixed_final/lights1_move1/inbound/"
-    # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/fixed_final/lights1_move1/inbound/"
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/fixed_final/lights1_move1/inbound/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/fixed_final/lights1_move1/inbound/"
+
+    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/fixed_final/lights2_move1/inbound/"
+    # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/fixed_final/lights2_move1/inbound/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/fixed_final/lights2_move1/inbound/"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/fixed_final/lights2_move1/inbound/"
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 200,
+        "niter": 100,
         "stepsize": 5000,
         "interval": 10,
         "method": "TNC",
@@ -759,16 +789,17 @@ def run_script(cell_range, session):
         "a_0": [10**-10, 1 / n_t]
     }
     # pipeline = analysis.Pipeline(cell_range, data_processor, [
-    #     "ConstVariable", "RelPosVariable","DualPeakedRel", "AbsPosVariable"])
+    # #     "ConstVariable", "RelPosVariable","DualPeakedRel", "AbsPosVariable"])
+    # pipeline = analysis.Pipeline(cell_range, data_processor, [
+    #     "ConstVariable", "RelPosVariable", "AbsPosVariable", "DualPeakedRel"], save_dir=save_dir)
     pipeline = analysis.Pipeline(cell_range, data_processor, [
-        "ConstVariable", "RelPosVariable", "AbsPosVariable", "DualPeakedRel"], save_dir=save_dir)
-
+        "ConstVariable", "RelPosVariable", "AbsPosVariable"], save_dir=save_dir)
     # pipeline.set_model_bounds("TimeVariableLength", bounds_t)
     pipeline.set_model_bounds("AbsPosVariable", bounds_norm)
     pipeline.set_model_bounds("RelPosVariable", bounds_norm)
     pipeline.set_model_bounds("ConstVariable",  {"a_0":[10**-10, 1]})
-    pipeline.set_model_bounds("DualPeakedRel", bounds_dual)
-    pipeline.set_model_x0("DualPeakedRel", [20, 1, 1e-5, 1e-5, 20, 1, 1e-5, 1e-5])
+    # pipeline.set_model_bounds("DualPeakedRel", bounds_dual)
+    # pipeline.set_model_x0("DualPeakedRel", [20, 1, 1e-5, 1e-5, 20, 1, 1e-5, 1e-5])
     pipeline.set_model_x0("AbsPosVariable", [1e-5, 20, 1, 1e-5])
     pipeline.set_model_x0("RelPosVariable", [1e-5, 20, 1, 1e-5])
     pipeline.set_model_x0("ConstVariable", [1e-5])
@@ -781,13 +812,13 @@ def run_script(cell_range, session):
         rel_pos = np.array(json.load(f))
     pipeline.set_model_info("AbsPosVariable", "abs_pos", abs_pos, True)
     pipeline.set_model_info("RelPosVariable", "rel_pos", rel_pos, True)
-    pipeline.set_model_info("DualPeakedRel", "rel_pos", rel_pos, True)
+    # pipeline.set_model_info("DualPeakedRel", "rel_pos", rel_pos, True)
     pipeline.fit_even_odd(solver_params=solver_params)
     pipeline.fit_all_models(solver_params=solver_params)
-    pipeline.compare_even_odd("ConstVariable", "DualPeakedRel", 0.01)
+    # pipeline.compare_even_odd("ConstVariable", "DualPeakedRel", 0.01)
     pipeline.compare_even_odd("ConstVariable", "RelPosVariable", 0.01)
     pipeline.compare_even_odd("ConstVariable", "AbsPosVariable", 0.01)
-    pipeline.compare_models("ConstVariable", "DualPeakedRel", 0.01, smoother_value=100)
+    # pipeline.compare_models("ConstVariable", "DualPeakedRel", 0.01, smoother_value=100)
     pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01, smoother_value=100)
     pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01, smoother_value=100)
 
@@ -914,7 +945,7 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-# run_script(range(1,2), "s23")
+run_script(range(1,2), "s23")
 if __name__ == "__main__":
     session = sys.argv[1]
     # session = "bolkan"
