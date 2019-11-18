@@ -168,28 +168,56 @@ class SigmaMuTauDual(Model):
 class SigmaMuTauDualStim(Model):
     def __init__(self, data):
         super().__init__(data)
-        self.param_names = ["sigma1","sigma2", "mu1", "mu2", "tau1","tau2", "a_1", "a_2", "a_0"]
+        self.param_names = ["sigma1","sigma2", "mu1", "mu2", "tau1","tau2", "a_1", "a_2","a_3", "a_4", "a_0"]
         self.t = np.tile(self.t, (self.num_trials, 1))
 
        
     def info_callback(self):
         self.stims = self.info["stim_identity"]
-        stim_matrix = np.zeros((self.spikes.shape[0], 4))
-        for trial, stim in enumerate(self.stims):
-            if stim == '0':
-                stim_matrix[trial][:] = [1, 0, 1, 0] #GG
-            elif stim == '1':
-                stim_matrix[trial][:] = [1, 0, 0, 1] #GE
-            elif stim == '2':
-                stim_matrix[trial][:] = [0, 1, 1, 0] #EG
-            elif stim == '3':
-                stim_matrix[trial][:] = [0, 1, 0, 1] #EE
-        self.stim_matrix = stim_matrix
+        '''for warden'''
+        stim_matrix1p = np.zeros((self.spikes.shape[0], 4))
+        stim_matrix2p = np.zeros((self.spikes.shape[0], 4))
+        for trial in self.stims:
+            samples = self.stims[trial]["sample"]
+            if samples[0] == 1:
+                stim_matrix1p[int(trial)][:] = [1, 0, 0, 0]
+            elif samples[0] == 2:
+                stim_matrix1p[int(trial)][:] = [0, 1, 0, 0]
+            elif samples[0] == 3:
+                stim_matrix1p[int(trial)][:] = [0, 0, 1, 0]
+            elif samples[0] == 4:
+                stim_matrix2p[int(trial)][:] = [0, 0, 0, 1]
+            if samples[1] == 1:
+                stim_matrix2p[int(trial)][:] = [1, 0, 0, 0]
+            elif samples[1] == 2:
+                stim_matrix2p[int(trial)][:] = [0, 1, 0, 0]
+            elif samples[1] == 3:
+                stim_matrix2p[int(trial)][:] = [0, 0, 1, 0]
+            elif samples[1] == 4:
+                stim_matrix2p[int(trial)][:] = [0, 0, 0, 1]
+
+
+        self.stim_matrix1p = stim_matrix1p
+        self.stim_matrix2p = stim_matrix2p
+
+
+        # '''for rossi pool'''
+        # stim_matrix = np.zeros((self.spikes.shape[0], 4))
+        # for trial, stim in enumerate(self.stims):
+        #     if stim == '0':
+        #         stim_matrix[trial][:] = [1, 0, 1, 0] #GG
+        #     elif stim == '1':
+        #         stim_matrix[trial][:] = [1, 0, 0, 1] #GE
+        #     elif stim == '2':
+        #         stim_matrix[trial][:] = [0, 1, 1, 0] #EG
+        #     elif stim == '3':
+        #         stim_matrix[trial][:] = [0, 1, 0, 1] #EE
+        # self.stim_matrix = stim_matrix
 
     def model(self, x, plot=False):
         '''One thing to try is to maybe pull out self.t as a kwarg in optimize, might allow jacobian to be calculated easier
         '''
-        s1,s2, mu1, mu2, tau1, tau2, a_1,a_2, a_0 = x
+        s1,s2, mu1, mu2, tau1, tau2, a_1,a_2,a_3, a_4, a_0 = x
         print(x)
         # fun1 = a_1*np.exp(-0.5*(np.power((self.t-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
         #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-mu1)/s))))
@@ -202,8 +230,29 @@ class SigmaMuTauDualStim(Model):
         fun1 = (np.exp((l1/2)*(2*mu1+l1*s1**2-2*self.t))*sse.erfc((mu1+l1*s1**2-self.t)/(np.sqrt(2)*s1)))
         fun2 = (np.exp((l2/2)*(2*mu2+l2*s2**2-2*self.t))*sse.erfc((mu2+l2*s2**2-self.t)/(np.sqrt(2)*s2)))
 
-        fun = (a_1*((self.stim_matrix[:, 0] * fun1.T) + (self.stim_matrix[:,2] *fun2.T)) + (    
-            (a_2*((self.stim_matrix[:, 1] * fun1.T) + (self.stim_matrix[:,3] *fun2.T))) + a_0))
+        '''for rossi pool'''
+        fun = (
+            a_1*(self.stim_matrix1p[:, 0] * fun1.T) 
+            + (a_2*(self.stim_matrix1p[:, 1] *fun1.T))
+            + (a_3*(self.stim_matrix1p[:, 2] *fun1.T))
+            + (a_4*(self.stim_matrix1p[:, 3] *fun1.T))
+        ) + (
+            a_1*(self.stim_matrix2p[:, 0] * fun2.T) 
+            + (a_2*(self.stim_matrix2p[:, 1] *fun2.T))
+            + (a_3*(self.stim_matrix2p[:, 2] *fun2.T))
+            + (a_4*(self.stim_matrix2p[:, 3] *fun2.T))
+        ) + a_0
+        # self.stim_matrix1p[:, 0] = a_1*self.stim_matrix1p[:, 0]
+        # self.stim_matrix1p[:, 1] = a_2*self.stim_matrix1p[:, 1]
+        # self.stim_matrix1p[:, 2] = a_3*self.stim_matrix1p[:, 2]
+        # self.stim_matrix1p[:, 3] = a_4*self.stim_matrix1p[:, 3]
+        # self.stim_matrix2p[:, 0] = a_1*self.stim_matrix2p[:, 0]
+        # self.stim_matrix2p[:, 1] = a_2*self.stim_matrix2p[:, 1]
+        # self.stim_matrix2p[:, 2] = a_3*self.stim_matrix2p[:, 2]
+        # self.stim_matrix2p[:, 3] = a_4*self.stim_matrix2p[:, 3]  
+        # fun = (self.stim_matrix1p * fun1.T) + (self.stim_matrix2p * fun2.T) + a_0
+        '''for warden'''
+
         # if any(np.isnan(fun1)):
         #     print(np.where(np.isnan(fun1)))
         return fun
@@ -217,7 +266,7 @@ class SigmaMuTauDualStim(Model):
         return obj
 
     def plot_model(self, x):
-        s1, s2, mu1, mu2, tau1, tau2, a_1,a_2, a_0 = x
+        s1, s2, mu1, mu2, tau1, tau2, a_1,a_2,a_3, a_4, a_0 = x
         print("final fit in plot {0}".format(x))
         # fun1 = a_1*np.exp(-0.5*(np.power((self.t[0]-mu1)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
         #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t[0]-mu1)/s))))
@@ -230,10 +279,20 @@ class SigmaMuTauDualStim(Model):
         fun1 = (np.exp((l1/2)*(2*mu1+l1*s1**2-2*self.t))*sse.erfc((mu1+l1*s1**2-self.t)/(np.sqrt(2)*s1)))
         fun2 = (np.exp((l2/2)*(2*mu2+l2*s2**2-2*self.t))*sse.erfc((mu2+l2*s2**2-self.t)/(np.sqrt(2)*s2)))
 
-        # fun = (a_1*((0.5*fun1.T) + (0.5*fun2.T)) + (    
-        #     (a_2*((0.5*fun1.T) + (0.5*fun2.T))) + a_0))
-        fun = (a_1*((self.stim_matrix[:, 0] * fun1.T) + (self.stim_matrix[:,2] *fun2.T)) + (    
-            (a_2*((self.stim_matrix[:, 1] * fun1.T) + (self.stim_matrix[:,3] *fun2.T))) + a_0))
+        # fun = (a_1*((self.stim_matrix[:, 0] * fun1.T) + (self.stim_matrix[:,2] *fun2.T)) + (    
+        #     (a_2*((self.stim_matrix[:, 1] * fun1.T) + (self.stim_matrix[:,3] *fun2.T))) + a_0))
+
+        fun = (
+            a_1*(self.stim_matrix1p[:, 0] * fun1.T) 
+            + (a_2*(self.stim_matrix1p[:, 1] *fun1.T))
+            + (a_3*(self.stim_matrix1p[:, 2] *fun1.T))
+            + (a_4*(self.stim_matrix1p[:, 3] *fun1.T))
+        ) + (
+            a_1*(fun2.T) 
+            + (a_2*(fun2.T))
+            + (a_3*(fun2.T))
+            + (a_4*(fun2.T))
+        ) + a_0
         # l1 = 1/tau1
         # l2 = 1/tau2
         # fun1 = a_1*(np.exp((l1/2)*(2*mu1+l1*s1**2-2*self.t[0]))*sse.erfc((mu1+l1*s1**2-self.t[0])/(np.sqrt(2)*s1)))
