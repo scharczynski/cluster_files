@@ -546,19 +546,19 @@ def run_script(cell_range, session):
     # # pipeline.compare_even_odd("Const", "Time", 0.01)
     # pipeline.compare_models("ConstVariable", "TimeVariableLength", 0.01, smoother_value=100)
 
-    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/iti/"
-    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/jay/ca1_time_cells"
-    # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/iti/"
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/iti/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/iti/"
+
+    # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
+    # save_dir = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recall_trials"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/"
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
-        path_to_data, cell_range, window=[0, 10000])
+        path_to_data, cell_range, window=[0, 3000])
     n_t = 2.
     solver_params = {
-        "niter": 200,
-        "stepsize": 1000,
+        "niter": 100,
+        "stepsize": 100,
         "interval": 10,
         "method": "TNC",
         "use_jac": True,
@@ -566,31 +566,100 @@ def run_script(cell_range, session):
         "disp":False
     }
     n = 2
-    bounds_t = {
-        "a_1": [0, 1 / n],
-        "ut": [-1000, 11000],
-        "st": [10, 6000],
-        "a_0": [10**-10, 1 / n]
+    bounds_smtstim = {
+        "sigma1": [0, 1000.],
+        "sigma2": [0, 1000.],
+        # "sigma": [0.1, 0.15],
+        "mu1": [0, 3000.],
+        "mu2": [0, 3000.],
+        "tau1": [20, 20000.],
+        "tau2": [20, 20000.],
+        "a_1": [10**-10, 1/5.],
+        "a_2": [10**-10, 1/5.],
+        "a_3": [10**-10, 1/5.],
+        "a_4": [10**-10, 1/5.],
+        "a_0": [10**-10, 1/5.]
     }
-    bounds_c = {
-        "a_0": [10**-10, 1 / n]
+    bounds_smt = {
+        "sigma1": [0, 1000.],
+        "sigma2": [0, 1000.],
+        # "sigma": [0.1, 0.15],
+        "mu1": [0, 3000.],
+        "mu2": [0, 3000.],
+        "tau1": [20, 20000.],
+        "tau2": [20, 20000.],
+        "a_1": [10**-10, 1/5.],
+        "a_0": [10**-10, 1/5.]
     }
     pipeline = analysis.Pipeline(cell_range, data_processor, [
-        "Const", "Time"], save_dir=save_dir)
+        "SigmaMuTauDual", "SigmaMuTauDualStim"], save_dir=save_dir)
     # pipeline = analysis.Pipeline(cell_range, data_processor, [
     #     "ConstVariable", "RelPosVariable"], save_dir=save_dir)
 
     # pipeline.set_model_bounds("TimeVariableLength", bounds_t)
-    pipeline.set_model_bounds("Const", bounds_c)
-    pipeline.set_model_bounds("Time", bounds_t)
-    pipeline.set_model_x0("Time", [1e-5, 1000, 300, 1e-5])
-    pipeline.set_model_x0("Const", [1e-5])
-    # pipeline.show_rasters(show=False)
-    pipeline.fit_even_odd(solver_params=solver_params)
+    pipeline.set_model_bounds("SigmaMuTauDual", bounds_smt)
+    pipeline.set_model_bounds("SigmaMuTauDualStim", bounds_smtstim)
+    # with open("/Users/stevecharczynski/workspace/data/warden/recall_trials/info.json") as f:
+    with open("/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/info.json") as f:
+        stims = json.load(f)
+        stims = {int(k):v for k,v in stims.items()}
+    pipeline.set_model_info("SigmaMuTauDualStim", "stim_identity", stims, per_cell=True)
+
+    pipeline.set_model_x0("SigmaMuTauDualStim", [0.01,0.01, 1000,2000, 100, 100, 1e-1, 1e-1,1e-1, 1e-1, 1e-1])
+    pipeline.set_model_x0("SigmaMuTauDual", [0.01,0.01, 1000,2000, 100, 100, 1e-1, 1e-1])
     pipeline.fit_all_models(solver_params=solver_params)
-    pipeline.compare_even_odd("Const", "Time", 0.01)
     # pipeline.compare_even_odd("Const", "Time", 0.01)
-    pipeline.compare_models("Const", "Time", 0.01, smoother_value=100)
+    pipeline.compare_models("SigmaMuTauDual", "SigmaMuTauDualStim", 0.01, smoother_value=100)
+
+
+    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/iti/"
+    # # path_to_data = "/projectnb/ecog-eeg/stevechar/data/jay/ca1_time_cells"
+    # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/iti/"
+    # # save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/iti/"
+    # # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/iti/"
+
+    # path_to_data = "/Users/stevecharczynski/workspace/data/crcns/hc-5/jason_conversion/perTrialSpikes/maze06_002/"
+    # save_dir = "/Users/stevecharczynski/workspace/scratch"
+
+    # # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
+    # data_processor = analysis.DataProcessor(
+    #     path_to_data, cell_range, window=[0, 30000])
+    # n_t = 2.
+    # solver_params = {
+    #     "niter": 100,
+    #     "stepsize": 1000,
+    #     "interval": 10,
+    #     "method": "TNC",
+    #     "use_jac": True,
+    #     "T" : 1,
+    #     "disp":False
+    # }
+    # n = 2
+    # bounds_t = {
+    #     "a_1": [0, 1 / n],
+    #     "ut": [-1000, 11000],
+    #     "st": [10, 6000],
+    #     "a_0": [10**-10, 1 / n]
+    # }
+    # bounds_c = {
+    #     "a_0": [10**-10, 1]
+    # }
+    # pipeline = analysis.Pipeline(cell_range, data_processor, [
+    #     "Const", "Time"], save_dir=save_dir)
+    # # pipeline = analysis.Pipeline(cell_range, data_processor, [
+    # #     "ConstVariable", "RelPosVariable"], save_dir=save_dir)
+
+    # # pipeline.set_model_bounds("TimeVariableLength", bounds_t)
+    # pipeline.set_model_bounds("Const", bounds_c)
+    # pipeline.set_model_bounds("Time", bounds_t)
+    # pipeline.set_model_x0("Time", [1e-5, 1000, 300, 1e-5])
+    # pipeline.set_model_x0("Const", [1e-5])
+    # pipeline.show_rasters(show=False)
+    # # pipeline.fit_even_odd(solver_params=solver_params)
+    # pipeline.fit_all_models(solver_params=solver_params)
+    # # pipeline.compare_even_odd("Const", "Time", 0.01)
+    # # pipeline.compare_even_odd("Const", "Time", 0.01)
+    # pipeline.compare_models("Const", "Time", 0.01, smoother_value=100)
 
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/rossi_pool/a1/"
@@ -945,7 +1014,7 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-# run_script(range(0,1365), "s23")
+# run_script(range(56,57), "s23")
 if __name__ == "__main__":
     session = sys.argv[1]
     # session = "bolkan"
