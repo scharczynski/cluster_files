@@ -539,15 +539,16 @@ def run_script(cell_range, session):
     # pipeline.set_model_bounds("TimeVariableLength", bounds_t)
     # pipeline.set_model_x0("TimeVariableLength", [1e-5, 1000, 300, 1e-5])
     # pipeline.set_model_x0("ConstVariable", [1e-5])
-    # # pipeline.show_rasters()
-    # # pipeline.fit_even_odd(solver_params=solver_params)
-    # pipeline.fit_all_models(solver_params=solver_params)
-    # # pipeline.compare_even_odd("ConstVariable", "TimeVariableLength", 0.01)
-    # # pipeline.compare_even_odd("Const", "Time", 0.01)
-    # pipeline.compare_models("ConstVariable", "TimeVariableLength", 0.01, smoother_value=100)
+    # # # pipeline.show_rasters()
+    # # # pipeline.fit_even_odd(solver_params=solver_params)
+    # # pipeline.fit_all_models(solver_params=solver_params)
+    # # # pipeline.compare_even_odd("ConstVariable", "TimeVariableLength", 0.01)
+    # # # pipeline.compare_even_odd("Const", "Time", 0.01)
+    # # pipeline.compare_models("ConstVariable", "TimeVariableLength", 0.01, smoother_value=100)
 
-    # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
-    # save_dir = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
+
+    # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
+    # save_dir = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
     save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recall_trials"
     path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/"
 
@@ -838,7 +839,7 @@ def run_script(cell_range, session):
     # save_dir = "/Users/stevecharczynski/Desktop/test/"
     # data_processor = analysis.DataProcessor(path_to_data, cell_range, [0, 10000])
     # solver_params = {
-    #     "niter": 25,
+    #     "niter": 5,
     #     "stepsize": 200,
     #     "interval": 10,
     #     "method": "TNC",
@@ -859,10 +860,10 @@ def run_script(cell_range, session):
     # pipeline.set_model_x0("Time", [1e-5, 2000, 200, 1e-5])
     # pipeline.set_model_x0("Const", [1e-5])
     # # pipeline.show_rasters()
-    # # pipeline.fit_even_odd(solver_params=solver_params)
+    # pipeline.fit_even_odd(solver_params=solver_params)
     # pipeline.fit_all_models(solver_params=solver_params)
     # pipeline.compare_models("Const", "Time", 0.001, smoother_value=100)
-    # # pipeline.compare_even_odd("Const", "Time", 0.001)
+    # pipeline.compare_even_odd("Const", "Time", 0.001)
 
 
 
@@ -1063,7 +1064,7 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-# run_script(range(55,56), "s23")
+# run_script(range(26,27), "s23")
 if __name__ == "__main__":
     session = sys.argv[1]
     # session = "bolkan"
