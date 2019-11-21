@@ -163,19 +163,26 @@ class SigmaMuTauStim(Model):
         self.stims = self.info["stim_identity"]
         '''for warden'''
         stim_matrix = np.zeros((self.spikes.shape[0], 4))
-        for trial in self.stims:
-            samples = self.stims[trial]["sample"]
+        if self.even_odd_trials == "even":
+            trials  = list(self.stims.keys())[::2]
+        elif self.even_odd_trials == "odd":
+            trials = list(self.stims.keys())[1::2]
+        else:
+            trials  =  list(self.stims.keys())
+        self.t = self.t[list(map(int, trials))]
+        for trial_num, trial in enumerate(trials):
+            samples = self.stims[(trial)]["sample"]
             if samples[0] == 1:
-                stim_matrix[int(trial)][:] = [1, 0, 0, 0]
+                stim_matrix[int(trial_num)][:] = [1, 0, 0, 0]
             elif samples[0] == 2:
-                stim_matrix[int(trial)][:] = [0, 1, 0, 0]
+                stim_matrix[int(trial_num)][:] = [0, 1, 0, 0]
             elif samples[0] == 3:
-                stim_matrix[int(trial)][:] = [0, 0, 1, 0]
+                stim_matrix[int(trial_num)][:] = [0, 0, 1, 0]
             elif samples[0] == 4:
-                stim_matrix[int(trial)][:] = [0, 0, 0, 1]
-
-
+                stim_matrix[int(trial_num)][:] = [0, 0, 0, 1]
+        print("what")
         self.stim_matrix = stim_matrix
+        return self.stim_matrix
 
     def model(self, x, plot=False):
         '''One thing to try is to maybe pull out self.t as a kwarg in optimize, might allow jacobian to be calculated easier
