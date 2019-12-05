@@ -556,7 +556,7 @@ def run_script(cell_range, session):
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range, window=[0, 1500])
     solver_params = {
-        "niter": 200,
+        "niter": 300,
         "stepsize": 100,
         "interval": 10,
         "method": "TNC",
@@ -582,19 +582,23 @@ def run_script(cell_range, session):
         "a_0": [10**-10, 1/2.]
     }
     pipeline = analysis.Pipeline(cell_range, data_processor, [
-        "SigmaMuTau", "SigmaMuTauStim"], save_dir=save_dir)
+        "Const","SigmaMuTau", "SigmaMuTauStim"], save_dir=save_dir)
     pipeline.set_model_bounds("SigmaMuTau", bounds_smt)
     pipeline.set_model_bounds("SigmaMuTauStim", bounds_smtstim)
-    # with open("/Users/stevecharczynski/workspace/data/warden/recall_trials/info.json") as f:
+    pipeline.set_model_bounds("Const", {"a_0":[10e-10, 1]})
+    # with open("/Users/stevecharczynski/workspace/data/warden/recog_trials/info.json") as f:
     with open("/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/info.json") as f:
         stims = json.load(f)
         stims = {int(k):v for k,v in stims.items()}
     pipeline.set_model_info("SigmaMuTauStim", "stim_identity", stims, per_cell=True)
     pipeline.set_model_x0("SigmaMuTauStim", [0.01, 1000, 100, 1e-1, 1e-1,1e-1, 1e-1, 1e-1])
     pipeline.set_model_x0("SigmaMuTau", [0.01, 1000, 100, 1e-1, 1e-1])
+    pipeline.set_model_x0("Const", [1e-1])
     pipeline.fit_all_models(solver_params=solver_params)
     pipeline.fit_even_odd(solver_params=solver_params)
+    pipeline.compare_even_odd("Const", "SigmaMuTau", 0.01)
     pipeline.compare_even_odd("SigmaMuTau", "SigmaMuTauStim", 0.01)
+    pipeline.compare_models("Const", "SigmaMuTau", 0.01, smoother_value=100)
     pipeline.compare_models("SigmaMuTau", "SigmaMuTauStim", 0.01, smoother_value=100)
 
     # # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
