@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/bash -
 #$ -l h_rt=140:00:00
 #$ -P ecog-eeg
 #$ -N run_all_cells
@@ -25,7 +25,7 @@ for i in `seq $1 $2`; do
 done
 
 numDone=0                              # Initialize so that loop starts
-while [ $numDone -lt $numJobs ]; do    # Less-than operator
+while [ $numDone -lt $numJobs ]; do    # Less-than operat   or
     numDone=0                          # Zero since we will re-count each time
     for jobID in $myJobIDs; do         # Loop through each job ID
 
@@ -43,6 +43,3 @@ while [ $numDone -lt $numJobs ]; do    # Less-than operator
         fi
     done
 done
-
-#qsub -pe omp 1 -l h_rt=140:00:00 -V python3 stitch_output.py 0 10
-python3 stitch_output.py $1 $2
