@@ -668,8 +668,8 @@ def run_script(cell_range, session):
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/iti/sep_pos/1/"
     # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/iti/sep_pos/1/"
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/iti/sep_pos/1/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/iti/sep_pos/1/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/iti/"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/iti/"
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range, window=[0, 10500])
     n_t = 2.
