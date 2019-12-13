@@ -549,57 +549,57 @@ def run_script(cell_range, session):
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
     # save_dir = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
-    save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recog_trials"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/"
+    # # save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recog_trials"
+    # # path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/"
 
-    # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
-    data_processor = analysis.DataProcessor(
-        path_to_data, cell_range, window=[0, 1500])
-    solver_params = {
-        "niter": 300,
-        "stepsize": 100,
-        "interval": 10,
-        "method": "TNC",
-        "use_jac": True,
-        "T" : 1,
-        "disp":False
-    }
-    bounds_smtstim = {
-        "sigma": [0, 1000.],
-        "mu": [0, 1500.],
-        "tau": [20, 20000.],
-        "a_1": [10**-10, 1/5.],
-        "a_2": [10**-10, 1/5.],
-        "a_3": [10**-10, 1/5.],
-        "a_4": [10**-10, 1/5.],
-        "a_0": [10**-10, 1/5.]
-    }
-    bounds_smt = {
-        "sigma": [0, 1000.],
-        "mu": [0, 1500.],
-        "tau": [20, 20000.],
-        "a_1": [10**-10, 1/2.],
-        "a_0": [10**-10, 1/2.]
-    }
-    pipeline = analysis.Pipeline(cell_range, data_processor, [
-        "Const","SigmaMuTau", "SigmaMuTauStim"], save_dir=save_dir)
-    pipeline.set_model_bounds("SigmaMuTau", bounds_smt)
-    pipeline.set_model_bounds("SigmaMuTauStim", bounds_smtstim)
-    pipeline.set_model_bounds("Const", {"a_0":[10e-10, 1]})
+    # # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
+    # data_processor = analysis.DataProcessor(
+    #     path_to_data, cell_range, window=[0, 1500])
+    # solver_params = {
+    #     "niter": 2,
+    #     "stepsize": 100,
+    #     "interval": 10,
+    #     "method": "TNC",
+    #     "use_jac": True,
+    #     "T" : 1,
+    #     "disp":False
+    # }
+    # bounds_smtstim = {
+    #     "sigma": [0, 1000.],
+    #     "mu": [0, 1500.],
+    #     "tau": [20, 20000.],
+    #     "a_1": [10**-10, 1/5.],
+    #     "a_2": [10**-10, 1/5.],
+    #     "a_3": [10**-10, 1/5.],
+    #     "a_4": [10**-10, 1/5.],
+    #     "a_0": [10**-10, 1/5.]
+    # }
+    # bounds_smt = {
+    #     "sigma": [0, 1000.],
+    #     "mu": [0, 1500.],
+    #     "tau": [20, 20000.],
+    #     "a_1": [10**-10, 1/2.],
+    #     "a_0": [10**-10, 1/2.]
+    # }
+    # pipeline = analysis.Pipeline(cell_range, data_processor, [
+    #     "Const","SigmaMuTau", "SigmaMuTauStim"], save_dir=save_dir)
+    # pipeline.set_model_bounds("SigmaMuTau", bounds_smt)
+    # pipeline.set_model_bounds("SigmaMuTauStim", bounds_smtstim)
+    # pipeline.set_model_bounds("Const", {"a_0":[10e-10, 1]})
     # with open("/Users/stevecharczynski/workspace/data/warden/recog_trials/info.json") as f:
-    with open("/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/info.json") as f:
-        stims = json.load(f)
-        stims = {int(k):v for k,v in stims.items()}
-    pipeline.set_model_info("SigmaMuTauStim", "stim_identity", stims, per_cell=True)
-    pipeline.set_model_x0("SigmaMuTauStim", [0.01, 1000, 100, 1e-1, 1e-1,1e-1, 1e-1, 1e-1])
-    pipeline.set_model_x0("SigmaMuTau", [0.01, 1000, 100, 1e-1, 1e-1])
-    pipeline.set_model_x0("Const", [1e-1])
-    pipeline.fit_all_models(solver_params=solver_params)
-    pipeline.fit_even_odd(solver_params=solver_params)
-    pipeline.compare_even_odd("Const", "SigmaMuTau", 0.01)
-    pipeline.compare_even_odd("SigmaMuTau", "SigmaMuTauStim", 0.01)
-    pipeline.compare_models("Const", "SigmaMuTau", 0.01, smoother_value=100)
-    pipeline.compare_models("SigmaMuTau", "SigmaMuTauStim", 0.01, smoother_value=100)
+    # # with open("/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/info.json") as f:
+    #     stims = json.load(f)
+    #     stims = {int(k):v for k,v in stims.items()}
+    # pipeline.set_model_info("SigmaMuTauStim", "stim_identity", stims, per_cell=True)
+    # pipeline.set_model_x0("SigmaMuTauStim", [0.01, 1000, 100, 1e-1, 1e-1,1e-1, 1e-1, 1e-1])
+    # pipeline.set_model_x0("SigmaMuTau", [0.01, 1000, 100, 1e-1, 1e-1])
+    # pipeline.set_model_x0("Const", [1e-1])
+    # pipeline.fit_all_models(solver_params=solver_params)
+    # pipeline.fit_even_odd(solver_params=solver_params)
+    # pipeline.compare_even_odd("Const", "SigmaMuTau", 0.01)
+    # pipeline.compare_even_odd("SigmaMuTau", "SigmaMuTauStim", 0.01)
+    # pipeline.compare_models("Const", "SigmaMuTau", 0.01, smoother_value=100)
+    # pipeline.compare_models("SigmaMuTau", "SigmaMuTauStim", 0.01, smoother_value=100)
 
     # # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
     # # save_dir = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
@@ -666,54 +666,48 @@ def run_script(cell_range, session):
     # pipeline.compare_models("SigmaMuTauDual", "SigmaMuTauDualStim", 0.01, smoother_value=100)
 
 
-    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/iti/"
-    # # path_to_data = "/projectnb/ecog-eeg/stevechar/data/jay/ca1_time_cells"
-    # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/iti/"
-    # # save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/iti/"
-    # # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/iti/"
-
-    # path_to_data = "/Users/stevecharczynski/workspace/data/crcns/hc-5/jason_conversion/perTrialSpikes/maze06_002/"
-    # save_dir = "/Users/stevecharczynski/workspace/scratch"
-
-    # # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
-    # data_processor = analysis.DataProcessor(
-    #     path_to_data, cell_range, window=[0, 30000])
-    # n_t = 2.
-    # solver_params = {
-    #     "niter": 100,
-    #     "stepsize": 1000,
-    #     "interval": 10,
-    #     "method": "TNC",
-    #     "use_jac": True,
-    #     "T" : 1,
-    #     "disp":False
-    # }
-    # n = 2
-    # bounds_t = {
-    #     "a_1": [0, 1 / n],
-    #     "ut": [-1000, 11000],
-    #     "st": [10, 6000],
-    #     "a_0": [10**-10, 1 / n]
-    # }
-    # bounds_c = {
-    #     "a_0": [10**-10, 1]
-    # }
+    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/iti/sep_pos/1/"
+    # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/iti/sep_pos/1/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/iti/sep_pos/1/"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/iti/sep_pos/1/"
+    data_processor = analysis.DataProcessor(
+        path_to_data, cell_range, window=[0, 10500])
+    n_t = 2.
+    solver_params = {
+        "niter": 300,
+        "stepsize": 1000,
+        "interval": 10,
+        "method": "TNC",
+        "use_jac": True,
+        "T" : 1,
+        "disp":False
+    }
+    n = 2
+    bounds_t = {
+        "a_1": [0, 1 / n],
+        "ut": [-1000, 11000],
+        "st": [10, 6000],
+        "a_0": [10**-10, 1 / n]
+    }
+    bounds_c = {
+        "a_0": [10**-10, 1]
+    }
+    pipeline = analysis.Pipeline(cell_range, data_processor, [
+        "Const", "Time"], save_dir=save_dir)
     # pipeline = analysis.Pipeline(cell_range, data_processor, [
-    #     "Const", "Time"], save_dir=save_dir)
-    # # pipeline = analysis.Pipeline(cell_range, data_processor, [
-    # #     "ConstVariable", "RelPosVariable"], save_dir=save_dir)
+    #     "ConstVariable", "RelPosVariable"], save_dir=save_dir)
 
-    # # pipeline.set_model_bounds("TimeVariableLength", bounds_t)
-    # pipeline.set_model_bounds("Const", bounds_c)
-    # pipeline.set_model_bounds("Time", bounds_t)
-    # pipeline.set_model_x0("Time", [1e-5, 1000, 300, 1e-5])
-    # pipeline.set_model_x0("Const", [1e-5])
+    # pipeline.set_model_bounds("TimeVariableLength", bounds_t)
+    pipeline.set_model_bounds("Const", bounds_c)
+    pipeline.set_model_bounds("Time", bounds_t)
+    pipeline.set_model_x0("Time", [1e-5, 1000, 300, 1e-5])
+    pipeline.set_model_x0("Const", [1e-5])
     # pipeline.show_rasters(show=False)
-    # # pipeline.fit_even_odd(solver_params=solver_params)
-    # pipeline.fit_all_models(solver_params=solver_params)
-    # # pipeline.compare_even_odd("Const", "Time", 0.01)
-    # # pipeline.compare_even_odd("Const", "Time", 0.01)
-    # pipeline.compare_models("Const", "Time", 0.01, smoother_value=100)
+    pipeline.fit_even_odd(solver_params=solver_params)
+    pipeline.fit_all_models(solver_params=solver_params)
+    pipeline.compare_even_odd("Const", "Time", 0.01)
+    # pipeline.compare_even_odd("Const", "Time", 0.01)
+    pipeline.compare_models("Const", "Time", 0.01, smoother_value=100)
 
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/rossi_pool/a1/"
@@ -1068,7 +1062,7 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-# run_script(range(26,27), "s23")
+# run_script(range(0,4), "s23")
 if __name__ == "__main__":
     session = sys.argv[1]
     # session = "bolkan"
