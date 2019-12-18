@@ -549,8 +549,8 @@ def run_script(cell_range, session):
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
     # save_dir = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
-    save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recog_trials"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recall_trials"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/"
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
@@ -587,7 +587,7 @@ def run_script(cell_range, session):
     pipeline.set_model_bounds("SigmaMuTauStim", bounds_smtstim)
     pipeline.set_model_bounds("Const", {"a_0":[10e-10, 1]})
     # with open("/Users/stevecharczynski/workspace/data/warden/recog_trials/info.json") as f:
-    with open("/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/info.json") as f:
+    with open("/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/info.json") as f:
         stims = json.load(f)
         stims = {int(k):v for k,v in stims.items()}
     pipeline.set_model_info("SigmaMuTauStim", "stim_identity", stims, per_cell=True)
