@@ -610,7 +610,7 @@ def run_script(cell_range, session):
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range, window=[0, 3000])
     solver_params = {
-        "niter": 500,
+        "niter": 1000,
         "stepsize": 100,
         "interval": 10,
         "method": "TNC",
