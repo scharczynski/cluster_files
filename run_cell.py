@@ -935,8 +935,8 @@ def run_script(cell_range, session):
     # save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/random_lights_on_only/inbound/"
     # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/random_lights_on_only/inbound/"
 
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/stable_lights_on_only/inbound/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/stable_lights_on_only/inbound/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/random_lights_on_only/inbound/"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/random_lights_on_only/inbound/"
 
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
