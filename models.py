@@ -1788,4 +1788,69 @@ class DualPeakedRel(Model):
         
         return self.function
 
+class DualPeakedAbs(Model):
+    
+    def __init__(self, data):
+        super().__init__(data)
+        self.spikes = data['spikes']
+        self.param_names = [
+            "ut_a", 
+            "st_a", 
+            "a_0a",
+            "a_1a",  
+            "ut_b", 
+            "st_b", 
+            "a_0b",
+            "a_1b"
+        ]
+
+    def info_callback(self):
+    # if "trial_length" in self.info:
+    #     self.trial_lengths = self.info["trial_length"]
+    #     for ind, trial in enumerate(self.trial_lengths):
+    #         self.spikes[ind][trial:] = np.nan
+    #     self.info.pop("trial_length")
+
+        if "abs_pos" in self.info:
+            pos = self.info["abs_pos"]
+            longest_trial = max(list(map(lambda x: len(x), pos)))
+            self.pos2 = np.zeros((len(pos),longest_trial), dtype=float)
+            for trial in range(len(pos)):
+                self.pos2[trial][:len(pos[trial])] = (np.array(pos[trial], dtype=float))
+            self.info.pop("abs_pos")
+            
+    def objective(self, x):
+        fun = self.model(x)
+        total = 0
+        for ind, trial in enumerate(self.spikes):
+            total+= np.sum(trial[self.window[ind, 0]:self.window[ind, 1]] * (-np.log(fun[ind,self.window[ind, 0]:self.window[ind, 1]])) +
+                        (1 - trial[self.window[ind, 0]:self.window[ind, 1]]) * (-np.log(1 - (fun[ind,self.window[ind, 0]:self.window[ind, 1]]))))
+
+        return total
+
+
+    def model(self, x):
+        ut_a, st_a, a_0a, a_1a, ut_b, st_b, a_0b, a_1b = x
+
+        fun1 = (
+            (a_1a * np.exp(-np.power(self.pos2 - ut_a, 2.) / (2 * np.power(st_a, 2.)))) + a_0a)
+        fun2 = (
+            (a_1b * np.exp(-np.power(self.pos2 - ut_b, 2.) / (2 * np.power(st_b, 2.)))) + a_0b)
+        self.function = fun1 + fun2
+        
+        return self.function
+
+    def plot_model(self, x):
+        ut_a, st_a, a_0a, a_1a, ut_b, st_b, a_0b, a_1b = x
+
+        fun1 = (
+            (a_1a * np.exp(-np.power(self.t - ut_a, 2.) / (2 * np.power(st_a, 2.)))) + a_0a)
+        fun2 = (
+            (a_1b * np.exp(-np.power(self.t - ut_b, 2.) / (2 * np.power(st_b, 2.)))) + a_0b)
+        self.function = fun1 + fun2
+        
+        return self.function
+
+
+
 
