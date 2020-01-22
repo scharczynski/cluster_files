@@ -9,5 +9,7 @@ module load python3
 
 echo $1
 
-python3 run_cell.py $2 $1 $1 
+echo $2
+
+python3 $2 $1 $1 
 # python3 run_cell.py $1 $1
