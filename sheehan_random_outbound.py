@@ -15,7 +15,7 @@ def run_script(cell_range):
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 400,
+        "niter": 500,
         "stepsize": 500,
         "interval": 10,
         "method": "TNC",
@@ -24,25 +24,19 @@ def run_script(cell_range):
         "disp":False
     }
     bounds_dual = {
-        "ut_a": [0., 90.],
+        "ut_a": [-10., 100.],
         "st_a": [0.1, 90.],
         "a_0a": [10**-10, 1 / 3],
         "a_1a": [10**-10, 1 / 3],
-        "ut_b": [0., 90.],
+        "ut_b": [-10., 100.],
         "st_b": [0.1, 90.],
         "a_0b": [10**-10, 1 / 3],
         "a_1b": [10**-10, 1 / 3],
     }
     bounds_norm = {
         "a_1": [10**-10, 1 / n_t],
-        "ut": [0., 90.],
+        "ut": [-10., 100.],
         "st": [0.1, 90.],
-        "a_0": [10**-10, 1 / n_t]
-    }
-    bounds_t = {
-        "a_1": [10**-10, 1 / n_t],
-        "ut": [0., 5000.],
-        "st": [10., 5000.],
         "a_0": [10**-10, 1 / n_t]
     }
     # pipeline = analysis.Pipeline(cell_range, data_processor, [
