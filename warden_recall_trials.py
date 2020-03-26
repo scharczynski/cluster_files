@@ -6,10 +6,10 @@ import maxlikespy.plotting as plotting
 import json
 
 def run_script(cell_range):
-    # # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
-    # # save_dir = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
-    # save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recog_trials/"
-    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/"
+    # # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
+    # # save_dir = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
+    # save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recall_trials/"
+    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/"
 
     # # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     # data_processor = analysis.DataProcessor(
@@ -45,8 +45,8 @@ def run_script(cell_range):
     # pipeline.set_model_bounds("SigmaMuTau", bounds_smt)
     # pipeline.set_model_bounds("SigmaMuTauStim", bounds_smtstim)
     # pipeline.set_model_bounds("Const", {"a_0":[10e-10, 1]})
-    # # with open("/Users/stevecharczynski/workspace/data/warden/recog_trials/info.json") as f:
-    # with open("/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/info.json") as f:
+    # # with open("/Users/stevecharczynski/workspace/data/warden/recall_trials/info.json") as f:
+    # with open("/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/info.json") as f:
     #     stims = json.load(f)
     #     stims = {int(k):v for k,v in stims.items()}
     # pipeline.set_model_info("SigmaMuTauStim", "stim_identity", stims, per_cell=True)
@@ -60,10 +60,10 @@ def run_script(cell_range):
     # pipeline.compare_models("Const", "SigmaMuTau", 0.01, smoother_value=100)
     # pipeline.compare_models("SigmaMuTau", "SigmaMuTauStim", 0.01, smoother_value=100)
 
-    # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
-    # save_dir = "/Users/stevecharczynski/workspace/data/warden/recog_trials/"
-    save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recog_trials/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recog_trials/"
+    # path_to_data = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
+    # save_dir = "/Users/stevecharczynski/workspace/data/warden/recall_trials/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/ml_runs/warden/recall_trials/"
+    path_to_data = "/projectnb/ecog-eeg/stevechar/data/warden/recall_trials/"
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
     data_processor = analysis.DataProcessor(
@@ -88,7 +88,7 @@ def run_script(cell_range):
         "Const","SigmaMuTau"], save_dir=save_dir)
     pipeline.set_model_bounds("SigmaMuTau", bounds_smt)
     pipeline.set_model_bounds("Const", {"a_0":[10e-10, 1]})
-    # with open("/Users/stevecharczynski/workspace/data/warden/recog_trials/info.json") as f:
+    # with open("/Users/stevecharczynski/workspace/data/warden/recall_trials/info.json") as f:
     pipeline.set_model_x0("SigmaMuTau", [0.01, 1000, 100, 1e-1, 1e-1])
     pipeline.set_model_x0("Const", [1e-1])
     pipeline.fit_all_models(solver_params=solver_params)
