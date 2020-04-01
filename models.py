@@ -1349,10 +1349,6 @@ class TimeVariableLength(Model):
 
         fun = self.model(x)
         total = 0
-        # for ind, trial in enumerate(self.spikes):
-        #     total+= np.sum(trial[:self.window[ind]] * (-np.log(fun[:self.window[ind]])) +
-        #               (1 - trial[:self.trial_lengths[ind]]) * (-np.log(1 - (fun[:self.trial_lengths[ind]]))))
-        #         total = 0
         for ind, trial in enumerate(self.spikes):
                 if self.window[ind, 0] < 0:
                     min_ind = 0
@@ -1361,14 +1357,7 @@ class TimeVariableLength(Model):
                 
                 total+= np.sum(trial[min_ind:self.window[ind, 1]] * (-np.log(fun[min_ind:self.window[ind, 1]])) +
                             (1 - trial[min_ind:self.window[ind, 1]]) * (-np.log(1 - (fun[min_ind:self.window[ind, 1]]))))
-        # l = lambda x: np.sum(self.spikes[x[0]][:self.trial_lengths[x[0]]] * (-np.log(fun[:self.trial_lengths[x[0]]])) +
-        #               (1 - self.spikes[x[0]][:self.trial_lengths[x[0]]]) * (-np.log(1 - (fun[:self.trial_lengths[x[0]]]))))
-        # obj = map(l, enumerate(self.trial_lengths))
-        # obj = np.sum(np.array(list(mapper)) * (-np.log(np.array(list(mapper2)))) +
-        #               (1 - np.array(list(mapper))) * (-np.log(1 - (np.array(list(mapper2))))))
-        # obj = total
         return total
-        # return total
 
     def model(self, x):
         a, ut, st, o = x
@@ -1383,6 +1372,46 @@ class TimeVariableLength(Model):
         self.function = (
             (a * np.exp(-np.power(self.t - ut, 2.) / (2 * np.power(st, 2.)))) + o)
         return self.function
+
+class SigmaMuTauVariableLength(Model):
+    def __init__(self, data):
+        super().__init__(data)
+        self.param_names = ["sigma", "mu", "tau", "a_1", "a_0"]
+
+    def info_callback(self):
+        self.trial_lengths = self.info["trial_length"]
+        for ind, trial in enumerate(self.trial_lengths):
+            self.spikes[ind][trial:] = np.nan
+
+    def objective(self, x):
+
+        fun = self.model(x)
+        total = 0
+        for ind, trial in enumerate(self.spikes):
+                if self.window[ind, 0] < 0:
+                    min_ind = 0
+                else:
+                    min_ind = self.window[ind, 0]
+                
+                total+= np.sum(trial[min_ind:self.window[ind, 1]] * (-np.log(fun[min_ind:self.window[ind, 1]])) +
+                            (1 - trial[min_ind:self.window[ind, 1]]) * (-np.log(1 - (fun[min_ind:self.window[ind, 1]]))))
+        return total
+
+    def model(self, x):
+
+        s, mu, tau, a_1, a_0 = x
+        l = 1/tau
+        '''old method'''
+        # fun = a_1*np.exp(-0.5*(np.power((self.t-m)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-m)/s))))
+        # ) + a_0
+
+        self.function = (a_1*(np.exp((l/2)*(2*mu+l*s**2-2*self.t))*sse.erfc((mu+l*s**2-self.t)/(np.sqrt(2)*s)))) + a_0
+
+        return self.function
+    
+    def plot_model(self, x):
+        return self.model(x)
 
 class DualVariableLength(Model):
 
