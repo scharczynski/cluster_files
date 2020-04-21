@@ -106,13 +106,13 @@ class SigmaMuTauStimRP(Model):
         self.t = self.t[trial_indices]
         for trial_num, trial in enumerate(trials):
             stim_class = self.stims[(trial)]["pair_stim_class"]
-            if stim_class == '1':
+            if stim_class == '0':
+                stim_matrix[int(trial_num)][:] = [1, 0]
+            elif stim_class == '1':
                 stim_matrix[int(trial_num)][:] = [1, 0]
             elif stim_class == '2':
-                stim_matrix[int(trial_num)][:] = [1, 0]
-            elif stim_class == '3':
                 stim_matrix[int(trial_num)][:] = [0, 1]
-            elif stim_class == '4':
+            elif stim_class == '3':
                 stim_matrix[int(trial_num)][:] = [0, 1]
         self.stim_matrix = stim_matrix
         return self.stim_matrix
@@ -187,13 +187,13 @@ class SigmaMuTauStimClassRP(Model):
         self.t = self.t[trial_indices]
         for trial_num, trial in enumerate(trials):
             stim_class = self.stims[(trial)]["pair_stim_class"]
-            if stim_class == '1':
+            if stim_class == '0':
                 stim_matrix[int(trial_num)][:] = [1, 0, 0, 0]
-            elif stim_class == '2':
+            elif stim_class == '1':
                 stim_matrix[int(trial_num)][:] = [0, 1, 0, 0]
-            elif stim_class == '3':
+            elif stim_class == '2':
                 stim_matrix[int(trial_num)][:] = [0, 0, 1, 0]
-            elif stim_class == '4':
+            elif stim_class == '3':
                 stim_matrix[int(trial_num)][:] = [0, 0, 0, 1]
         self.stim_matrix = stim_matrix
         return self.stim_matrix
@@ -209,7 +209,7 @@ class SigmaMuTauStimClassRP(Model):
             (a_1*(self.stim_matrix[:, 0] * fun1.T))
             + (a_2*(self.stim_matrix[:, 1] *fun1.T))
             + (a_3*(self.stim_matrix[:, 2] *fun1.T))
-            + (a_4*(self.stim_matrix[:, 1] *fun1.T))
+            + (a_4*(self.stim_matrix[:, 3] *fun1.T))
         ) + a_0
 
         return fun
@@ -219,7 +219,7 @@ class SigmaMuTauStimClassRP(Model):
 
         obj = np.sum(self.spikes * (-np.log(fun)) +
                       (1 - self.spikes) * (-np.log(1 - (fun))))
-        
+
         return obj
 
     def plot_model(self, x):
