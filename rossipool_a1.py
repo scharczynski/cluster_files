@@ -15,7 +15,7 @@ def run_script(cell_range):
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range, window=[0, 3000])
     solver_params = {
-        "niter": 3000,
+        "niter": 500,
         "stepsize": 100,
         "interval": 10,
         "method": "TNC",
@@ -64,12 +64,16 @@ def run_script(cell_range):
     pipeline.set_model_x0("SigmaMuTauStimClassRP", [0.01, 1000, 100, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1])
     pipeline.set_model_x0("SigmaMuTau", [0.01, 1000, 100, 1e-1, 1e-1])
     pipeline.set_model_x0("Const", [1e-1])
+    # pipeline.show_rasters()
+
     pipeline.fit_all_models(solver_params=solver_params)
+    
     # pipeline.fit_even_odd(solver_params=solver_params)
     # pipeline.compare_even_odd("Const", "SigmaMuTau", 0.01)
     # pipeline.compare_even_odd("SigmaMuTau", "SigmaMuTauStimRP", 0.01)
     pipeline.compare_models("Const", "SigmaMuTau", 0.01, smoother_value=100)
     pipeline.compare_models("SigmaMuTau", "SigmaMuTauStimRP", 0.05, smoother_value=100)
+    pipeline.compare_models("SigmaMuTau", "SigmaMuTauStimClassRP", 0.05, smoother_value=100)
     pipeline.compare_models("SigmaMuTauStimRP", "SigmaMuTauStimClassRP", 0.05, smoother_value=100)
 
     # path_to_data = "/Users/stevecharczynski/workspace/data/rossi_pool/a1/"
@@ -107,6 +111,7 @@ def run_script(cell_range):
     # pipeline.compare_even_odd("Const", "SigmaMuTau", 0.01)
     # pipeline.compare_models("Const", "SigmaMuTau", 0.01, smoother_value=100)
 
+# run_script((228,228))
 if __name__ == "__main__":
     cell_range = sys.argv[-2:]
     cell_range = list(map(int, cell_range))
