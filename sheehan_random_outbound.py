@@ -8,14 +8,15 @@ import numpy as np
 
 
 def run_script(cell_range):
-
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/random_lights_on_only/outbound/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/random_lights_on_only/outbound/"
+    save_dir = "/Users/stevecharczynski/Desktop/test/"
+    path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/random_box_lights_on/lights1_move1/outbound"
+    # save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/random_lights_on_only/outbound/"
+    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/random_lights_on_only/outbound/"
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 500,
+        "niter": 1,
         "stepsize": 500,
         "interval": 10,
         "method": "TNC",
@@ -76,8 +77,10 @@ def run_script(cell_range):
     pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01, smoother_value=100)
     pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01, smoother_value=100)
 
-if __name__ == "__main__":
-    cell_range = sys.argv[-2:]
-    cell_range = list(map(int, cell_range))
-    cell_range = range(cell_range[0], cell_range[1]+1)
-    run_script(cell_range)
+# if __name__ == "__main__":
+#     cell_range = sys.argv[-2:]
+#     cell_range = list(map(int, cell_range))
+#     cell_range = range(cell_range[0], cell_range[1]+1)
+#     run_script(cell_range)
+
+run_script([0,1])

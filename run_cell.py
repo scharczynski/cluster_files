@@ -930,13 +930,13 @@ def run_script(cell_range, session):
 
 
 
-    # path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/random_box_lights_on/lights1_move1/inbound/"
-    # save_dir = "/Users/stevecharczynski/workspace/data/sheehan/random_box_lights_on/lights1_move1/inbound/"
+    path_to_data = "/Users/stevecharczynski/workspace/data/sheehan/random_box_lights_on/lights1_move1/inbound/"
+    save_dir = "/Users/stevecharczynski/workspace/data/sheehan/random_box_lights_on/lights1_move1/inbound/"
     # save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/random_lights_on_only/inbound/"
     # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/random_lights_on_only/inbound/"
 
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/stable_lights_on_only/inbound/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/stable_lights_on_only/inbound/"
+    # save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/stable_lights_on_only/outbound/"
+    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/stable_lights_on_only/outbound/"
 
 
     # time_info = list(zip(np.zeros(len(trial_length), dtype=int), trial_length))
@@ -944,7 +944,7 @@ def run_script(cell_range, session):
         path_to_data, cell_range)
     n_t = 2.
     solver_params = {
-        "niter": 200,
+        "niter": 1,
         "stepsize": 500,
         "interval": 10,
         "method": "TNC",
@@ -1136,7 +1136,7 @@ def run_script(cell_range, session):
     # pipeline.compare_models("Const", "Time", 0.01)
     # pipeline.compare_models("Time", "SigmaMuTau", 0.01)
 
-# run_script(range(3,4), "s23")
+run_script(range(3,4), "s23")
 if __name__ == "__main__":
     session = sys.argv[1]
     # session = "bolkan"
