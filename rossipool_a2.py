@@ -68,13 +68,17 @@ def run_script(cell_range):
 
     pipeline.fit_all_models(solver_params=solver_params)
     
-    # pipeline.fit_even_odd(solver_params=solver_params)
+    pipeline.fit_even_odd(solver_params=solver_params)
     # pipeline.compare_even_odd("Const", "SigmaMuTau", 0.01)
     # pipeline.compare_even_odd("SigmaMuTau", "SigmaMuTauStimRP", 0.01)
     pipeline.compare_models("Const", "SigmaMuTau", 0.01, smoother_value=100)
     pipeline.compare_models("SigmaMuTau", "SigmaMuTauStimRP", 0.01, smoother_value=100)
     pipeline.compare_models("SigmaMuTau", "SigmaMuTauStimClassRP", 0.01, smoother_value=100)
     pipeline.compare_models("SigmaMuTauStimRP", "SigmaMuTauStimClassRP", 0.01, smoother_value=100)
+    pipeline.compare_even_odd("Const", "SigmaMuTau", 0.01)
+    pipeline.compare_even_odd("SigmaMuTau", "SigmaMuTauStimRP", 0.05)
+    pipeline.compare_even_odd("SigmaMuTau", "SigmaMuTauStimClassRP", 0.05)
+    pipeline.compare_even_odd("SigmaMuTauStimRP", "SigmaMuTauStimClassRP", 0.05)
     
     # # path_to_data = "/Users/stevecharczynski/workspace/data/rossi_pool/a2/"
     # # save_dir = "/Users/stevecharczynski/workspace/data/rossi_pool/a2/"
