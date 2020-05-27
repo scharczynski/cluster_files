@@ -3,6 +3,7 @@ from maxlikespy.model import Model
 import autograd.numpy as np
 import autograd.scipy.special as sse
 import matplotlib.pyplot as plt
+import math
 # from scipy import special as sse
 
 
@@ -1463,6 +1464,44 @@ class TimePos(Model):
                                (2 * np.power(self.st, 2.)))) + self.o + self.p * (np.sum(self.position, axis=0) / self.num_trials)
         return fun
 
+class TimeInhibitVariableLength(Model):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.spikes = data['spikes']
+        self.param_names = ["a_1", "ut", "st", "a_0"]
+        self.x0 = [1e-5, 100, 100, 1e-5]
+
+    def info_callback(self):
+        self.trial_lengths = self.info["trial_length"]
+        for ind, trial in enumerate(self.trial_lengths):
+            self.spikes[ind][trial:] = np.nan
+
+    def objective(self, x):
+
+        fun = self.model(x)
+        total = 0
+        for ind, trial in enumerate(self.spikes):
+                if self.window[ind, 0] < 0:
+                    min_ind = 0
+                else:
+                    min_ind = self.window[ind, 0]
+                
+                total+= np.sum(trial[min_ind:self.window[ind, 1]] * (-np.log(fun[min_ind:self.window[ind, 1]])) +
+                            (1 - trial[min_ind:self.window[ind, 1]]) * (-np.log(1 - (fun[min_ind:self.window[ind, 1]]))))
+        return total
+
+    def model(self, x):
+        a, ut, st, o = x
+
+        self.function = (
+            (-a * np.exp(-np.power(self.t - ut, 2.) / (2 * np.power(st, 2.)))) + o)
+        return self.function 
+    
+    def plot_model(self, x):
+
+        return self.model(x)
+
 class TimeVariableLength(Model):
 
     def __init__(self, data):
@@ -1503,6 +1542,88 @@ class TimeVariableLength(Model):
         self.function = (
             (a * np.exp(-np.power(self.t - ut, 2.) / (2 * np.power(st, 2.)))) + o)
         return self.function
+
+class LogNormalVariableLength(Model):
+
+    def __init__(self, data):
+        super().__init__(data)
+        self.spikes = data['spikes']
+        self.param_names = ["a_1", "ut", "st", "a_0"]
+        self.x0 = [1e-5, 100, 100, 1e-5]
+        # self.t = self.t + 1
+
+    def info_callback(self):
+        self.trial_lengths = self.info["trial_length"]
+        for ind, trial in enumerate(self.trial_lengths):
+            self.spikes[ind][trial:] = np.nan
+
+    def objective(self, x):
+
+        fun = self.model(x)
+        total = 0
+        for ind, trial in enumerate(self.spikes):
+                if self.window[ind, 0] < 0:
+                    min_ind = 0
+                else:
+                    min_ind = self.window[ind, 0]
+                
+                total+= np.sum(trial[min_ind:self.window[ind, 1]] * (-np.log(fun[min_ind:self.window[ind, 1]])) +
+                            (1 - trial[min_ind:self.window[ind, 1]]) * (-np.log(1 - (fun[min_ind:self.window[ind, 1]]))))
+        return total
+
+    def model(self, x):
+        a, ut, st, o = x
+
+        self.function = (
+            ((a * np.exp(-np.power(np.log(self.t) - ut, 2.) / (2 * np.power(st, 2.)))) + o))
+        # fun = ((np.log(self.t) - ut)/np.sqrt(2*st**2)) 
+        # erf_part = np.array(list(map(lambda x: math.erf(x), fun)))
+        # self.function =a*(0.5 + 0.5*erf_part) + o
+        return self.function 
+    
+    def plot_model(self, x):
+
+        return self.model(x)
+
+class InhibitSigmaMuTauJayLEC(Model):
+    def __init__(self, data):
+        super().__init__(data)
+        self.param_names = ["sigma", "mu", "tau", "a_1", "a_0"]
+
+    def info_callback(self):
+        self.trial_lengths = self.info["trial_length"]
+        for ind, trial in enumerate(self.trial_lengths):
+            self.spikes[ind][trial:] = np.nan
+
+    def objective(self, x):
+
+        fun = self.model(x)
+        total = 0
+        for ind, trial in enumerate(self.spikes):
+                if self.window[ind, 0] < 0:
+                    min_ind = 0
+                else:
+                    min_ind = self.window[ind, 0]
+                
+                total+= np.sum(trial[min_ind:self.window[ind, 1]] * (-np.log(fun[min_ind:self.window[ind, 1]])) +
+                            (1 - trial[min_ind:self.window[ind, 1]]) * (-np.log(1 - (fun[min_ind:self.window[ind, 1]]))))
+        return total
+
+    def model(self, x):
+
+        s, mu, tau, a_1, a_0 = x
+        l = 1/tau
+        '''old method'''
+        # fun = a_1*np.exp(-0.5*(np.power((self.t-m)/s,2)))*(s/tau)*np.sqrt(np.pi/2)*(
+        #     np.array(list(map(self.erfcx, (1/np.sqrt(2))*((s/tau)- (self.t-m)/s))))
+        # ) + a_0
+
+        self.function = (-a_1*(np.exp((l/2)*(2*mu+l*s**2-2*self.t))*sse.erfc((mu+l*s**2-self.t)/(np.sqrt(2)*s)))) + a_0
+
+        return self.function
+    
+    def plot_model(self, x):
+        return self.model(x)
 
 class SigmaMuTauVariableLength(Model):
     def __init__(self, data):
