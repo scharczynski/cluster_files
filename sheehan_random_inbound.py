@@ -75,7 +75,7 @@ def run_script(cell_range):
     # pipeline.compare_models("RelPosVariable", "DualPeakedRel", 0.01, smoother_value=100)
     # pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01, smoother_value=100)
     # pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01, smoother_value=100)
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/random_lights_on_only/inbound/time_cells/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/random_lights_on_only/inbound/"
     path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/random_lights_on_only/inbound/"
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)

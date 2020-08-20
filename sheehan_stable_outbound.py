@@ -75,7 +75,7 @@ def run_script(cell_range):
     # pipeline.compare_models("RelPosVariable", "DualPeakedRel", 0.01, smoother_value=100)
     # pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01, smoother_value=100)
     # pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01, smoother_value=100)
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/stable_lights_on_only/outbound/time_cells/"
+    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/stable_lights_on_only/outbound/"
     path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/stable_lights_on_only/outbound/"
     data_processor = analysis.DataProcessor(
         path_to_data, cell_range)
@@ -132,36 +132,36 @@ def run_script(cell_range):
     pipeline.compare_models("ConstVariable", "RelPosVariable", 0.01, smoother_value=100)
     pipeline.compare_models("ConstVariable", "AbsPosVariable", 0.01, smoother_value=100)
 
-    save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/stable_lights_on_only/outbound/time_cells/"
-    path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/stable_lights_on_only/outbound/"
-    data_processor = analysis.DataProcessor(
-        path_to_data, cell_range)
-    n_t = 2.
-    solver_params = {
-        "niter": 1000,
-        "stepsize": 50,
-        "interval": 10,
-        "method": "TNC",
-        "use_jac": True,
-        "T" : 1,
-        "disp":False
-    }
-    bounds_norm = {
-        "a_1": [10**-10, 1 / n_t],
-        "ut": [-1000., 4000.],
-        "st": [10, 3000.],
-        "a_0": [10**-10, 1 / n_t]
-    }
-    pipeline = analysis.Pipeline(cell_range, data_processor, [
-        "ConstVariable", "TimeVariableLength"], save_dir=save_dir)
-    pipeline.set_model_bounds("TimeVariableLength", bounds_norm)
-    pipeline.set_model_bounds("ConstVariable",  {"a_0":[10**-10, 1]})
-    pipeline.set_model_x0("TimeVariableLength", [1e-5, 500, 50, 1e-5])
-    pipeline.set_model_x0("ConstVariable", [1e-5])
-    pipeline.fit_even_odd(solver_params=solver_params)
-    pipeline.fit_all_models(solver_params=solver_params)
-    pipeline.compare_even_odd("ConstVariable", "TimeVariableLength", 0.01)
-    pipeline.compare_models("ConstVariable", "TimeVariableLength", 0.01, smoother_value=100)
+    # save_dir = "/projectnb/ecog-eeg/stevechar/sheehan_runs/stable_lights_on_only/outbound/time_cells/"
+    # path_to_data = "/projectnb/ecog-eeg/stevechar/data/sheehan/stable_lights_on_only/outbound/"
+    # data_processor = analysis.DataProcessor(
+    #     path_to_data, cell_range)
+    # n_t = 2.
+    # solver_params = {
+    #     "niter": 1000,
+    #     "stepsize": 50,
+    #     "interval": 10,
+    #     "method": "TNC",
+    #     "use_jac": True,
+    #     "T" : 1,
+    #     "disp":False
+    # }
+    # bounds_norm = {
+    #     "a_1": [10**-10, 1 / n_t],
+    #     "ut": [-1000., 4000.],
+    #     "st": [10, 3000.],
+    #     "a_0": [10**-10, 1 / n_t]
+    # }
+    # pipeline = analysis.Pipeline(cell_range, data_processor, [
+    #     "ConstVariable", "TimeVariableLength"], save_dir=save_dir)
+    # pipeline.set_model_bounds("TimeVariableLength", bounds_norm)
+    # pipeline.set_model_bounds("ConstVariable",  {"a_0":[10**-10, 1]})
+    # pipeline.set_model_x0("TimeVariableLength", [1e-5, 500, 50, 1e-5])
+    # pipeline.set_model_x0("ConstVariable", [1e-5])
+    # pipeline.fit_even_odd(solver_params=solver_params)
+    # pipeline.fit_all_models(solver_params=solver_params)
+    # pipeline.compare_even_odd("ConstVariable", "TimeVariableLength", 0.01)
+    # pipeline.compare_models("ConstVariable", "TimeVariableLength", 0.01, smoother_value=100)
 
 if __name__ == "__main__":
     cell_range = sys.argv[-2:]
